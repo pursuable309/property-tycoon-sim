@@ -1,0 +1,149 @@
+=== A/B on GitHub Actions  run 38999230806  (pinned node v25.8.2) ===
+[cell 31337 5p bd arm=base] done 573s  viol 0  latentFires {}  brokerFires {"4":374,"5":238}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p bd arm=base] done 1513s  viol 0  latentFires {}  brokerFires {"4":1784,"5":2891}  entryFires {"3":41,"4":16,"5":24}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h bd arm=base] done 855s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p bd arm=deep24] done 3037s  viol 0  latentFires {}  brokerFires {"4":1718,"5":1556}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h bd arm=deep24] done 5004s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p bd arm=roll24] done 1206s  viol 0  latentFires {}  brokerFires {"4":934,"5":681}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p bd arm=roll24] done 6565s  viol 0  latentFires {}  brokerFires {"4":4719,"5":8058}  entryFires {"3":46,"4":19,"5":31}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h bd arm=roll24] done 1868s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p delayed arm=base] done 576s  viol 0  latentFires {}  brokerFires {"4":404,"5":278}  entryFires {"3":1}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p delayed arm=base] done 2312s  viol 0  latentFires {}  brokerFires {"4":1564,"5":3580}  entryFires {"3":39,"4":27,"5":21}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h delayed arm=base] done 735s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p delayed arm=deep24] done 3062s  viol 0  latentFires {}  brokerFires {"4":1977,"5":1489}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h delayed arm=deep24] done 3923s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p delayed arm=roll24] done 1523s  viol 0  latentFires {}  brokerFires {"4":978,"5":740}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p delayed arm=roll24] done 3515s  viol 0  latentFires {}  brokerFires {"4":4805,"5":10444}  entryFires {"3":42,"4":20,"5":23}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h delayed arm=roll24] done 2046s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p standard arm=base] done 468s  viol 0  latentFires {}  brokerFires {"4":348,"5":309}  entryFires {"4":1}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p standard arm=base] done 2344s  viol 0  latentFires {}  brokerFires {"4":1348,"5":3231}  entryFires {"3":42,"4":24,"5":31}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h standard arm=base] done 783s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p standard arm=deep24] done 3005s  viol 0  latentFires {}  brokerFires {"4":1683,"5":1478}  entryFires {"4":1}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h standard arm=deep24] done 2510s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 5p standard arm=roll24] done 1390s  viol 0  latentFires {}  brokerFires {"4":759,"5":707}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p standard arm=roll24] done 6405s  viol 0  latentFires {}  brokerFires {"4":4815,"5":8253}  entryFires {"3":37,"4":26,"5":29}
+  node v25.8.2 on 4 vCPU
+[cell 31337 h2h standard arm=roll24] done 2343s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p bd arm=base] done 602s  viol 0  latentFires {}  brokerFires {"4":385,"5":322}  entryFires {"3":4,"5":1}
+  node v25.8.2 on 4 vCPU
+[cell 4242 8p bd arm=base] done 2343s  viol 0  latentFires {}  brokerFires {"4":1422,"5":3452}  entryFires {"3":40,"4":33,"5":33}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h bd arm=base] done 687s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p bd arm=deep24] done 1895s  viol 0  latentFires {}  brokerFires {"4":2045,"5":1532}  entryFires {"3":2,"5":3}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h bd arm=deep24] done 5703s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p bd arm=roll24] done 1670s  viol 0  latentFires {}  brokerFires {"4":1118,"5":874}  entryFires {"3":2,"5":3}
+  node v25.8.2 on 4 vCPU
+[cell 4242 8p bd arm=roll24] done 6901s  viol 0  latentFires {}  brokerFires {"4":4237,"5":10138}  entryFires {"3":51,"4":26,"5":32}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h bd arm=roll24] done 1687s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p delayed arm=base] done 550s  viol 0  latentFires {}  brokerFires {"4":307,"5":291}  entryFires {"3":1,"5":2}
+  node v25.8.2 on 4 vCPU
+[cell 4242 8p delayed arm=base] done 2341s  viol 0  latentFires {}  brokerFires {"4":1739,"5":3273}  entryFires {"3":33,"4":18,"5":25}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h delayed arm=base] done 583s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p delayed arm=deep24] done 2634s  viol 0  latentFires {}  brokerFires {"4":1791,"5":1792}  entryFires {"5":2}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h delayed arm=deep24] done 4584s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p delayed arm=roll24] done 791s  viol 0  latentFires {}  brokerFires {"4":751,"5":889}  entryFires {"3":1,"5":2}
+  node v25.8.2 on 4 vCPU
+[cell 4242 8p delayed arm=roll24] done 6353s  viol 0  latentFires {}  brokerFires {"4":5038,"5":9455}  entryFires {"3":26,"4":17,"5":38}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h delayed arm=roll24] done 2070s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p standard arm=base] done 536s  viol 0  latentFires {}  brokerFires {"4":361,"5":295}  entryFires {"3":3,"4":2}
+  node v25.8.2 on 4 vCPU
+[cell 4242 8p standard arm=base] done 1131s  viol 0  latentFires {}  brokerFires {"4":1398,"5":3020}  entryFires {"3":45,"4":26,"5":48}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h standard arm=base] done 677s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p standard arm=deep24] done 2923s  viol 0  latentFires {}  brokerFires {"4":1743,"5":1285}  entryFires {"3":2,"4":3}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h standard arm=deep24] done 4030s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 4242 5p standard arm=roll24] done 1056s  viol 0  latentFires {}  brokerFires {"4":956,"5":675}  entryFires {"3":2,"4":2}
+  node v25.8.2 on 4 vCPU
+[cell 4242 8p standard arm=roll24] done 5934s  viol 0  latentFires {}  brokerFires {"4":4068,"5":8222}  entryFires {"3":59,"4":21,"5":45}
+  node v25.8.2 on 4 vCPU
+[cell 4242 h2h standard arm=roll24] done 2162s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p bd arm=base] done 337s  viol 0  latentFires {}  brokerFires {"4":438,"5":288}  entryFires {"3":4,"4":1}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p bd arm=base] done 1379s  viol 0  latentFires {}  brokerFires {"4":1432,"5":3211}  entryFires {"3":40,"4":27,"5":22}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h bd arm=base] done 937s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p bd arm=deep24] done 2926s  viol 0  latentFires {}  brokerFires {"4":2600,"5":1668}  entryFires {"3":1,"4":1}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h bd arm=deep24] done 5250s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p bd arm=roll24] done 1866s  viol 0  latentFires {}  brokerFires {"4":1320,"5":907}  entryFires {"3":4,"4":1}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p bd arm=roll24] done 6242s  viol 0  latentFires {}  brokerFires {"4":4248,"5":9015}  entryFires {"3":51,"4":20,"5":22}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h bd arm=roll24] done 1271s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p delayed arm=base] done 544s  viol 0  latentFires {}  brokerFires {"4":327,"5":340}  entryFires {"3":2}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p delayed arm=base] done 1717s  viol 0  latentFires {}  brokerFires {"4":1657,"5":2866}  entryFires {"3":41,"4":24,"5":33}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h delayed arm=base] done 700s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p delayed arm=deep24] done 2521s  viol 0  latentFires {}  brokerFires {"4":1857,"5":2011}  entryFires {"3":2}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p delayed arm=deep24] done 7045s  viol 0  latentFires {}  brokerFires {"4":8855,"5":17015}  entryFires {"3":46,"4":32,"5":22}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h delayed arm=deep24] done 5386s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p delayed arm=roll24] done 1054s  viol 0  latentFires {}  brokerFires {"4":959,"5":1157}  entryFires {"3":2}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p delayed arm=roll24] done 4834s  viol 0  latentFires {}  brokerFires {"4":4355,"5":8317}  entryFires {"3":48,"4":19,"5":35}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h delayed arm=roll24] done 1771s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p standard arm=base] done 429s  viol 0  latentFires {}  brokerFires {"4":300,"5":301}  entryFires {"3":1,"4":3}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p standard arm=base] done 2038s  viol 0  latentFires {}  brokerFires {"4":1616,"5":2618}  entryFires {"3":32,"4":17,"5":22}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h standard arm=base] done 806s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p standard arm=deep24] done 2845s  viol 0  latentFires {}  brokerFires {"4":1435,"5":1348}  entryFires {"3":1,"4":2}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h standard arm=deep24] done 2997s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 9000 5p standard arm=roll24] done 797s  viol 0  latentFires {}  brokerFires {"4":653,"5":711}  entryFires {"3":1,"4":2}
+  node v25.8.2 on 4 vCPU
+[cell 9000 8p standard arm=roll24] done 4228s  viol 0  latentFires {}  brokerFires {"4":4533,"5":7569}  entryFires {"3":32,"4":15,"5":36}
+  node v25.8.2 on 4 vCPU
+[cell 9000 h2h standard arm=roll24] done 1892s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+cells: 73 / 108  (cell job result: cancelled)
+ALL DONE 2026-10-17 14:15:59 UTC
