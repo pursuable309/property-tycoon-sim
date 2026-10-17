@@ -1,0 +1,87 @@
+# Sim-offload workflow. Shipped into the mirror repo as .github/workflows/ab.yml
+# by ../gh_ab.sh — edit THIS file (ai-lab/gh/ab.yml), never the mirror's copy.
+#
+# Each `job/<id>` branch is a one-commit snapshot of just the sim code plus a
+# job.json {arms, shapes, seeds, rulesets}. plan expands it to one matrix cell
+# per seed x ruleset x arm x shape; collect commits results/cells/*.json +
+# results/run.log back onto the same branch for `gh_ab.sh fetch` to pull.
+name: ab
+on:
+  push:
+    branches: ['job/**']
+permissions:
+  contents: write
+jobs:
+  plan:
+    # collect's own push is made with GITHUB_TOKEN, which never triggers a
+    # workflow — this guard only matters if results are ever pushed by hand.
+    if: "!startsWith(github.event.head_commit.message, '[results]')"
+    runs-on: ubuntu-latest
+    outputs:
+      cells: ${{ steps.m.outputs.cells }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: m
+        run: |
+          node -e '
+            const j = require("./job.json"), cells = [];
+            for (const shape of j.shapes) for (const arm of j.arms)
+              for (const seed of j.seeds) for (const rules of j.rulesets)
+                cells.push({ seed, rules, arm, shape });
+            console.log("cells=" + JSON.stringify(cells));
+          ' >> "$GITHUB_OUTPUT"
+  cell:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.cells) }}
+    env:
+      NAME: ${{ matrix.seed }}_${{ matrix.rules }}_${{ matrix.arm }}_${{ matrix.shape }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - run: |
+          mkdir -p out
+          N=$(node -p 'require("./job.json").n || ""')
+          node .claude/skills/review-games/scripts/ai-lab/ab_cell.js \
+            --seed ${{ matrix.seed }} --rules ${{ matrix.rules }} \
+            --arm ${{ matrix.arm }} --shape ${{ matrix.shape }} \
+            ${N:+--n $N} --out "out/$NAME.json" 2> "out/$NAME.log"
+          echo "  node $(node -v) on $(nproc) vCPU" >> "out/$NAME.log"
+          cat "out/$NAME.log"
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: cell-${{ env.NAME }}
+          path: out/
+          retention-days: 7
+  collect:
+    needs: cell
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: cell-*
+          path: out
+          merge-multiple: true
+      - run: |
+          mkdir -p results/cells
+          cp out/*.json results/cells/ 2>/dev/null || true
+          {
+            echo "=== A/B on GitHub Actions  run ${{ github.run_id }}  (pinned node $(cat .nvmrc)) ==="
+            cat out/*.log 2>/dev/null
+            echo "cells: $(ls results/cells | wc -l) / $(node -p 'const j=require("./job.json");j.arms.length*j.shapes.length*j.seeds.length*j.rulesets.length')  (cell job result: ${{ needs.cell.result }})"
+            echo "ALL DONE $(date -u '+%F %H:%M:%S') UTC"
+          } > results/run.log
+          git config user.name "sim-bot"
+          git config user.email "sim-bot@users.noreply.github.com"
+          git add results
+          git commit -m "[results] ${{ github.ref_name }} (${{ needs.cell.result }})"
+          git push origin "HEAD:${{ github.ref_name }}"

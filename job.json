@@ -1,0 +1,28 @@
+{
+  "id": "20261017-0333-base-roll24-deep24-deep",
+  "submitted": 1792207984,
+  "head": "68c54cd",
+  "dirty": true,
+  "arms": [
+    "base",
+    "roll24",
+    "deep24",
+    "deep"
+  ],
+  "shapes": [
+    "h2h",
+    "5p",
+    "8p"
+  ],
+  "seeds": [
+    4242,
+    9000,
+    31337
+  ],
+  "rulesets": [
+    "standard",
+    "delayed",
+    "bd"
+  ],
+  "node": "v25.8.2"
+}
