@@ -1,0 +1,42 @@
+=== A/B on GitHub Actions  run 42501163650  (pinned node v25.8.2) ===
+[cell 31337 4p bd arm=base] done 39s  viol 0  latentFires {}  brokerFires {}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 6p bd arm=base] done 56s  viol 0  latentFires {}  brokerFires {"4":57,"5":12}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p bd arm=base] done 69s  viol 0  latentFires {}  brokerFires {"4":43,"5":114}  entryFires {"3":1}
+  node v25.8.2 on 4 vCPU
+[cell 31337 t4p bd arm=base] done 301s  viol 0  latentFires {}  brokerFires {"4":153,"5":67}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 4p bd arm=fund1] done 52s  viol 0  latentFires {}  brokerFires {"4":1}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 6p bd arm=fund1] done 145s  viol 0  latentFires {}  brokerFires {"4":52,"5":23}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p bd arm=fund1] done 56s  viol 0  latentFires {}  brokerFires {"4":44,"5":134}  entryFires {}
+  node v25.8.2 on 4 vCPU
+bundle.js:4695
+                (state.tiles[String(m)].owner === player.id && !gives.includes(m)));
+                                        ^
+
+TypeError: Cannot read properties of undefined (reading 'owner')
+    at bundle.js:4695:41
+    at Array.every (<anonymous>)
+    at bundle.js:4694:39
+    at Array.forEach (<anonymous>)
+    at Object._e74Unfunded (bundle.js:4689:14)
+    at CPUPlayer._e74Unfunded (/home/runner/work/property-tycoon-sim/property-tycoon-sim/.claude/skills/review-games/scripts/ai-lab/ab_cell.js:351:19)
+    at Object._maybeProposeTrade (bundle.js:4445:43)
+    at CPUPlayer._maybeProposeTrade (/home/runner/work/property-tycoon-sim/property-tycoon-sim/.claude/skills/review-games/scripts/ai-lab/ab_cell.js:361:19)
+    at CPUPlayer._maybeProposeTrade (/home/runner/work/property-tycoon-sim/property-tycoon-sim/.claude/skills/review-games/scripts/ai-lab/ab_cell.js:562:15)
+    at C._maybeProposeTrade (/home/runner/work/property-tycoon-sim/property-tycoon-sim/.claude/skills/review-games/scripts/ai-lab/ab_cell.js:684:19)
+
+Node.js v25.8.2
+[cell 31337 4p bd arm=fund2] done 52s  viol 0  latentFires {}  brokerFires {"4":1}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 6p bd arm=fund2] done 72s  viol 0  latentFires {}  brokerFires {"4":63,"5":16}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 8p bd arm=fund2] done 88s  viol 0  latentFires {}  brokerFires {"4":54,"5":70}  entryFires {}
+  node v25.8.2 on 4 vCPU
+[cell 31337 t4p bd arm=fund2] done 234s  viol 0  latentFires {}  brokerFires {"4":178,"5":74}  entryFires {}
+  node v25.8.2 on 4 vCPU
+cells: 11 / 12  (cell job result: failure)
+ALL DONE 2026-11-08 16:46:51 UTC
