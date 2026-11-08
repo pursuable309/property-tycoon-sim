@@ -1,0 +1,25 @@
+{
+  "id": "20261108-1641-base-fund1-fund2",
+  "submitted": 1794156069,
+  "head": "56d6652",
+  "dirty": false,
+  "arms": [
+    "base",
+    "fund1",
+    "fund2"
+  ],
+  "shapes": [
+    "4p",
+    "6p",
+    "8p",
+    "t4p"
+  ],
+  "seeds": [
+    31337
+  ],
+  "rulesets": [
+    "bd"
+  ],
+  "node": "v25.8.2",
+  "n": 1
+}
