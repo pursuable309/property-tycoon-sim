@@ -1,0 +1,5 @@
+=== A/B on GitHub Actions  run 42654656315  (pinned node v25.8.2) ===
+[cell 4242 5p bd arm=base] done 704s  viol 0  latentFires {}  brokerFires {"4":448,"5":622}  entryFires {"3":1}
+  node v25.8.2 on 4 vCPU
+cells: 1 / 36  (cell job result: cancelled)
+ALL DONE 2026-11-09 16:39:04 UTC
