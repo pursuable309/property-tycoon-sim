@@ -1,0 +1,25 @@
+{
+  "id": "20261109-1625-base-sbf2d5a5",
+  "submitted": 1794241532,
+  "head": "5d1496e",
+  "dirty": false,
+  "arms": [
+    "base",
+    "sbf2d5a5"
+  ],
+  "shapes": [
+    "5p",
+    "6p"
+  ],
+  "seeds": [
+    4242,
+    9000,
+    31337
+  ],
+  "rulesets": [
+    "standard",
+    "delayed",
+    "bd"
+  ],
+  "node": "v25.8.2"
+}
