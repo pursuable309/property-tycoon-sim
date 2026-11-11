@@ -1,0 +1,28 @@
+{
+  "id": "20261111-1541-base-thin50d5",
+  "submitted": 1794411709,
+  "head": "08ad298",
+  "dirty": false,
+  "arms": [
+    "base",
+    "thin50d5"
+  ],
+  "shapes": [
+    "t4p",
+    "4p",
+    "6p",
+    "8p",
+    "h2h"
+  ],
+  "seeds": [
+    4242,
+    9000,
+    31337
+  ],
+  "rulesets": [
+    "standard",
+    "delayed",
+    "bd"
+  ],
+  "node": "v25.8.2"
+}
