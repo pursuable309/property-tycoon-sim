@@ -1,0 +1,21 @@
+{
+  "id": "20261111-2019-base-cloneold",
+  "submitted": 1794428397,
+  "head": "cbcc364",
+  "dirty": false,
+  "arms": [
+    "base",
+    "cloneold"
+  ],
+  "shapes": [
+    "t4p"
+  ],
+  "seeds": [
+    31337
+  ],
+  "rulesets": [
+    "bd"
+  ],
+  "node": "v25.8.2",
+  "n": 3
+}
