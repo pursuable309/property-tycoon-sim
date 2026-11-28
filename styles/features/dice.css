@@ -1,0 +1,74 @@
+.dice-area {
+    display: flex;
+    gap: var(--spacing-sm);
+    font-size: 2.2rem;
+    line-height: 1;
+}
+
+/* A drawn die: a 1em square holding a 3x3 pip grid (dice-ui.js). Before the
+   first roll it shows the "?" placeholder as text. */
+.die {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 1.1em;
+    height: 1.1em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.18em;
+    box-shadow: var(--shadow);
+}
+
+.dice-area .die { padding: 0.16em; }
+
+.die[data-face] {
+    display: inline-grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    place-items: center;
+}
+
+.pip {
+    width: 68%;
+    height: 68%;
+    border-radius: 50%;
+    background: var(--pip, var(--text));
+    visibility: hidden;
+}
+
+/* Cells: 1 2 3 / 4 5 6 / 7 8 9 */
+.die[data-face="1"] .pip:nth-child(5),
+.die[data-face="2"] .pip:nth-child(3), .die[data-face="2"] .pip:nth-child(7),
+.die[data-face="3"] .pip:nth-child(3), .die[data-face="3"] .pip:nth-child(5), .die[data-face="3"] .pip:nth-child(7),
+.die[data-face="4"] .pip:nth-child(1), .die[data-face="4"] .pip:nth-child(3), .die[data-face="4"] .pip:nth-child(7), .die[data-face="4"] .pip:nth-child(9),
+.die[data-face="5"] .pip:nth-child(1), .die[data-face="5"] .pip:nth-child(3), .die[data-face="5"] .pip:nth-child(5), .die[data-face="5"] .pip:nth-child(7), .die[data-face="5"] .pip:nth-child(9),
+.die[data-face="6"] .pip:nth-child(1), .die[data-face="6"] .pip:nth-child(3), .die[data-face="6"] .pip:nth-child(4), .die[data-face="6"] .pip:nth-child(6), .die[data-face="6"] .pip:nth-child(7), .die[data-face="6"] .pip:nth-child(9) { visibility: visible; }
+
+.die.rolling { animation: dice-shake 0.25s linear infinite; }
+
+/* Dice roll = Tumble (Animations = Full): a full turn with a hop, the second
+   die the other way round; Shake (Reduced) keeps the short shake above */
+[data-anim-dice="tumble"] .die.rolling { animation: dice-tumble 0.42s linear infinite; }
+[data-anim-dice="tumble"] #die-2.rolling { animation-direction: reverse; animation-duration: 0.5s; }
+
+@keyframes dice-tumble {
+    0% { transform: translateY(0) rotate(0deg) scale(1); }
+    25% { transform: translateY(-22%) rotate(90deg) scale(0.86); }
+    50% { transform: translateY(0) rotate(180deg) scale(1); }
+    75% { transform: translateY(-22%) rotate(270deg) scale(0.86); }
+    100% { transform: translateY(0) rotate(360deg) scale(1); }
+}
+
+@keyframes dice-shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(12deg); }
+    75% { transform: rotate(-12deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.die-land { animation: die-land 0.25s ease-out; }
+
+@keyframes die-land {
+    0% { transform: scale(1.45); }
+    100% { transform: scale(1); }
+}

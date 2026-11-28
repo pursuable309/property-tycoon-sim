@@ -1,0 +1,301 @@
+/* Statistics tab — archive analytics dashboard.
+   Reuses .history-card / .history-section-title / .score-chip; all colour comes
+   from theme tokens so dark mode is automatic. The personality-archetype palette
+   is CVD-validated (light + dark) — see scripts/ui/stats-ui.js header. */
+
+#stats-root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+
+    /* Categorical archetype palette (light) — validated adjacent + all-pairs. */
+    --arch-aggressive: #2a78d6;
+    --arch-hoarder:    #eb6834;
+    --arch-builder:    #1baf7a;
+    --arch-trader:     #eda100;
+    --arch-cautious:   #e87ba4;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) #stats-root {
+        --arch-aggressive: #3987e5;
+        --arch-hoarder:    #d95926;
+        --arch-builder:    #199e70;
+        --arch-trader:     #c98500;
+        --arch-cautious:   #d55181;
+    }
+}
+:root[data-theme="dark"] #stats-root {
+    --arch-aggressive: #3987e5;
+    --arch-hoarder:    #d95926;
+    --arch-builder:    #199e70;
+    --arch-trader:     #c98500;
+    --arch-cautious:   #d55181;
+}
+
+.stats-switcher { margin-bottom: var(--spacing-sm); }
+
+.stats-content { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+
+.stats-card { gap: var(--spacing-sm); }
+.stats-card-body { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+
+/* ==================== KPI tiles ==================== */
+
+.stats-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    gap: var(--spacing-xs);
+}
+.stats-kpi-grid-sm { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
+
+.stats-kpi {
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+    text-align: center;
+}
+.stats-kpi-val { font-size: 1.35rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.stats-kpi-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+.stats-kpi-sub { font-size: 0.66rem; color: var(--text-muted); opacity: 0.85; }
+
+/* ==================== Horizontal bars ==================== */
+
+.stats-bars { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+.stats-bar-row { display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.82rem; }
+.stats-bar-label {
+    flex: 0 0 auto; min-width: 3.4em; max-width: 9em;
+    color: var(--text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: clip;
+}
+.stats-bar-track {
+    flex: 1 1 auto;
+    height: 14px;
+    background: var(--surface-alt);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.stats-bar-fill {
+    height: 100%;
+    min-width: 2px;
+    background: var(--accent);
+    border-radius: var(--radius-lg);
+    transition: width 0.3s ease;
+}
+.stats-bar-val {
+    flex: 0 0 auto; min-width: 3.2em; text-align: right;
+    font-variant-numeric: tabular-nums; font-weight: 600;
+}
+
+/* ==================== Column histogram ==================== */
+
+.stats-hist { display: flex; flex-direction: column; gap: 2px; }
+.stats-hist-cols {
+    display: flex; align-items: flex-end; gap: 2px;
+    height: 96px;
+    padding-top: var(--spacing-xs);
+}
+.stats-hist-col { flex: 1 1 0; display: flex; align-items: flex-end; height: 100%; }
+.stats-hist-bar {
+    width: 100%;
+    min-height: 1px;
+    background: var(--accent);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.stats-hist-axis {
+    display: flex; gap: 2px;
+    font-size: 0.6rem; color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+.stats-hist-axis span { flex: 1 1 0; text-align: center; overflow: hidden; }
+
+/* ==================== Heatmap ==================== */
+
+.stats-heat {
+    display: grid;
+    gap: 2px;
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+}
+.stats-heat-corner { }
+.stats-heat-colh, .stats-heat-rowh { color: var(--text-muted); text-align: center; align-self: center; }
+.stats-heat-rowh { text-align: right; padding-right: 4px; }
+.stats-heat-cell {
+    text-align: center;
+    padding: 5px 2px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    color: var(--text);
+}
+.stats-heat-cell.is-hot { color: var(--accent-contrast); font-weight: 600; }
+.stats-heat-cell.is-empty { color: var(--text-muted); opacity: 0.5; }
+
+/* ==================== Stacked part-to-whole ==================== */
+
+.stats-stack-wrap { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+.stats-stack {
+    display: flex;
+    height: 16px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-alt);
+    gap: 2px;
+}
+.stats-stack-seg { height: 100%; min-width: 2px; }
+.stats-legend { display: flex; flex-wrap: wrap; gap: var(--spacing-xs) var(--spacing-sm); font-size: 0.72rem; color: var(--text-muted); }
+.stats-legend-item { display: inline-flex; align-items: center; gap: 4px; }
+.stats-legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+/* ==================== Area (time series) ==================== */
+
+.stats-area { display: flex; flex-direction: column; gap: 2px; }
+.stats-area-plot {
+    position: relative;
+    width: 100%; height: 90px;
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+.stats-area-svg { width: 100%; height: 100%; display: block; }
+.stats-area-fill { fill: color-mix(in srgb, var(--accent) 22%, transparent); stroke: none; }
+.stats-area-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+.stats-area-axis { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-muted); }
+
+/* Interactive line-chart layer: transparent hit area + a moving point marker.
+   pan-y keeps vertical page scroll while horizontal drags scrub the days. */
+.stats-area-hit {
+    position: absolute; inset: 0;
+    cursor: crosshair;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+.stats-area-dot {
+    position: absolute;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1.5px var(--accent);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ==================== Notes, progress, empty ==================== */
+
+.stats-note { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ==================== Tap/hover tooltip ==================== */
+
+.stats-tip {
+    position: fixed;
+    z-index: 1000;
+    max-width: 220px;
+    padding: 5px 9px;
+    background: var(--text);
+    color: var(--surface);
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    box-shadow: var(--shadow);
+    pointer-events: none;
+}
+
+.stats-tappable { cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.stats-tappable:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Active (tapped / hovered) mark highlight — per chart type. */
+.stats-bar-row.is-active { background: var(--surface-alt); border-radius: var(--radius-sm); }
+.stats-bar-row.is-active .stats-bar-fill { filter: brightness(1.12); }
+.stats-hist-col.is-active .stats-hist-bar { filter: brightness(1.18); }
+.stats-heat-cell.is-active,
+.stats-kpi.is-active,
+.stats-area-plot.is-active { outline: 2px solid var(--accent); outline-offset: -2px; }
+.stats-stack-seg.is-active { filter: brightness(1.18); }
+
+.stats-progress {
+    display: flex; flex-direction: column; gap: var(--spacing-xs);
+    padding: var(--spacing-md) 0;
+}
+.stats-progress-text { font-size: 0.82rem; color: var(--text-muted); text-align: center; }
+.stats-progress-track { height: 6px; background: var(--surface-alt); border-radius: var(--radius-lg); overflow: hidden; }
+.stats-progress-fill { height: 100%; width: 0; background: var(--accent); border-radius: var(--radius-lg); transition: width 0.2s ease; }
+
+.stats-empty-emoji { font-size: 2.4rem; }
+
+/* ==================== Claude review tab ==================== */
+
+.cl-body { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+
+/* Dual-thumb date range: two range inputs share a track; only the thumbs are
+   pointer-interactive, so the lower/upper thumb can each be dragged. */
+.cl-range { position: relative; height: 26px; }
+.cl-range-track,
+.cl-range-fill { position: absolute; top: 11px; height: 4px; border-radius: var(--radius-lg); }
+.cl-range-track { left: 0; right: 0; background: var(--surface-alt); }
+.cl-range-fill { background: var(--accent); }
+.cl-range-input {
+    position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 26px; margin: 0;
+    -webkit-appearance: none; appearance: none; background: none; pointer-events: none;
+}
+.cl-range-input::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; pointer-events: auto;
+    width: 18px; height: 18px; border-radius: 50%; background: var(--accent);
+    border: 2px solid var(--surface); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); cursor: pointer;
+}
+.cl-range-input::-moz-range-thumb {
+    pointer-events: auto; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--surface); cursor: pointer;
+}
+.cl-range-input::-moz-range-track { background: none; border: none; }
+.cl-range-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+/* Word cloud */
+.cl-cloud-toolbar { display: flex; justify-content: flex-end; }
+.cl-cloud {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center;
+    gap: 1px 7px; line-height: 1.25; padding: var(--spacing-xs) 0;
+}
+.cl-word {
+    background: none; border: none; padding: 0 2px; cursor: pointer;
+    color: var(--accent); font-family: inherit; font-weight: 600; border-radius: var(--radius-sm);
+}
+.cl-word:hover { text-decoration: underline; }
+.cl-word.is-sel { background: var(--accent); color: var(--accent-contrast); opacity: 1; }
+
+/* Summary drill-down */
+.cl-summaries { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-top: var(--spacing-xs); }
+.cl-summaries-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-sm);
+    font-size: 0.82rem; font-weight: 600; color: var(--text);
+}
+.cl-summaries-clear {
+    background: none; border: 1px solid var(--surface-alt); color: var(--text-muted);
+    font-size: 0.72rem; padding: 2px 6px; border-radius: var(--radius-sm); cursor: pointer;
+}
+.cl-summary { border-left: 3px solid var(--surface-alt); padding-left: var(--spacing-sm); }
+.cl-summary-date { font-size: 0.7rem; color: var(--text-muted); }
+.cl-summary-text { font-size: 0.82rem; line-height: 1.45; }
+.cl-mark { background: color-mix(in srgb, var(--accent) 32%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+
+/* ==================== Responsive ==================== */
+
+/* External display: tighten KPI grid and shrink chart heights. The screen
+   is landscape, so the main KPI tiles go three-up (two rows, not three). */
+@media (max-height: 499px) {
+    .stats-kpi-grid, .stats-kpi-grid-sm { grid-template-columns: 1fr 1fr; }
+    .stats-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stats-kpi-val { font-size: 1.1rem; }
+    .stats-hist-cols { height: 64px; }
+    .stats-area-plot { height: 64px; }
+    .stats-bar-label { min-width: 2.6em; }
+    .stats-heat { font-size: 0.6rem; }
+    /* Keep the largest cloud terms from blowing out the narrow column. */
+    .cl-cloud .cl-word { font-size: 0.9rem !important; }
+    .cl-cloud { gap: 1px 5px; }
+}
+
+
+/* Style C: KPI figures read like a ledger (money-green, monospaced) */
+.stats-kpi-val { color: var(--money); font-family: var(--font-mono); }
+.stats-solo-sub { color: var(--text-muted); font-size: 0.85em; margin-right: auto; }

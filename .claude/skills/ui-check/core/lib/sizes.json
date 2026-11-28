@@ -1,0 +1,10 @@
+{
+  "_comment": "The shared ui-check size presets (CSS px), one set for every app: the Razr's two displays as Chrome apps (read from Property Tycoon's settings page). The default sweep is cover-cams, cover and internal; cover-wide (Property Tycoon) and full are presets an app or a run asks for (--sizes full). type follows the three shared device queries (.shared/README.md \"Screen Sizes\"): cover = (max-height: 499px); internal = up to 480 wide and 500+ tall; full = 481+ wide and 500+ tall. An app's config.json \"sizes\" may add presets of its own.",
+  "sizes": {
+    "cover-cams": { "w": 361, "h": 407, "note": "Razr cover, Chrome app, page to the bottom edge (cameras bottom-right: buttons in the pocket)" },
+    "cover":      { "w": 361, "h": 308, "note": "Razr cover, Chrome app, page ends above the cameras" },
+    "internal":   { "w": 307, "h": 699, "note": "Razr internal display, Chrome app" },
+    "cover-wide": { "w": 805, "h": 361, "note": "landscape short screen (Property Tycoon's wide cover)" },
+    "full":       { "w": 800, "h": 900, "note": "full layout (tablet, desktop): on request" }
+  }
+}

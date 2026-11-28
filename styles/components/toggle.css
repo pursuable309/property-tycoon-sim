@@ -1,0 +1,36 @@
+/* Toggle switch — replaces checkboxes and on/off dropdowns.
+   Usage: <input type="checkbox" class="toggle"> */
+
+.toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+    margin: 0;
+    border: none;
+    border-radius: 12px;
+    background: var(--border);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s ease;
+}
+
+.toggle:checked { background: var(--accent); }
+.toggle:checked::after { transform: translateX(20px); }
+
+[data-anim="off"] .toggle,
+[data-anim="off"] .toggle::after { transition: none; }

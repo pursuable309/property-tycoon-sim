@@ -1,0 +1,298 @@
+/* Event animations driven by scripts/ui/motion.js (Animations = Full only;
+   the classes are never added otherwise) */
+
+/* A purchase or auction win: the tile flips once, glowing in the buyer's colour */
+.tile-bought {
+    animation: tile-bought 0.7s ease-out;
+    z-index: 3;
+}
+
+@keyframes tile-bought {
+    0% { transform: perspective(200px) rotateY(0deg) scale(1); }
+    45% { transform: perspective(200px) rotateY(180deg) scale(1.3); box-shadow: 0 0 0 2px var(--flash), 0 0 12px 3px var(--flash); }
+    100% { transform: perspective(200px) rotateY(360deg) scale(1); }
+}
+
+/* A colour set just completed: a light sweeps across each band, twice */
+.tile-set-new .tile-band { position: relative; overflow: hidden; }
+
+.tile-set-new .tile-band::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.85) 50%, transparent 80%);
+    transform: translateX(-120%);
+    animation: band-shimmer 0.8s ease-in-out 2;
+}
+
+.tile-set-new { animation: set-pop 0.8s ease-in-out 2; z-index: 2; }
+
+@keyframes band-shimmer {
+    to { transform: translateX(120%); }
+}
+
+@keyframes set-pop {
+    50% { transform: scale(1.12); }
+}
+
+/* Houses / a hotel built: the new pips drop onto the tile with a bounce
+   (a hotel lands with a gold flash); sold: a ghost of each lifts off and fades.
+   --pip-delay staggers the pips and the tiles of one action. */
+.pip-drop {
+    animation: pip-drop 0.45s cubic-bezier(0.3, 1.6, 0.6, 1) var(--pip-delay, 0ms) backwards;
+}
+
+.hotel-pip.pip-drop {
+    animation-name: hotel-drop;
+    animation-duration: 0.6s;
+}
+
+@keyframes pip-drop {
+    0% { transform: translateY(-9px) scale(1.8); opacity: 0; }
+    60% { opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes hotel-drop {
+    0% { transform: translateY(-10px) scale(2); opacity: 0; }
+    55% { transform: translateY(0) scale(1.3); opacity: 1; box-shadow: 0 0 0 1px #ffd54a, 0 0 8px 3px #ffd54a; }
+    100% { transform: translateY(0) scale(1); box-shadow: none; }
+}
+
+.pip-lift {
+    animation: pip-lift 0.5s ease-in var(--pip-delay, 0ms) both;
+}
+
+@keyframes pip-lift {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-10px) scale(1.4); opacity: 0; }
+}
+
+/* A build / sale: one sweep of the set shimmer across the tile's band,
+   left to right on a build, right to left (and fainter) on a sale */
+.tile-band-built .tile-band, .tile-band-sold .tile-band { position: relative; overflow: hidden; }
+
+.tile-band-built .tile-band::after, .tile-band-sold .tile-band::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.85) 50%, transparent 80%);
+    transform: translateX(-120%);
+    animation: band-shimmer 0.8s ease-in-out;
+}
+
+.tile-band-sold .tile-band::after {
+    opacity: 0.55;
+    transform: translateX(120%);
+    animation-name: band-shimmer-back;
+}
+
+@keyframes band-shimmer-back {
+    to { transform: translateX(-120%); }
+}
+
+/* Mortgaged / unmortgaged: the tile turns edge-on and comes back showing its
+   new face; the hatched overlay (tile.css .tile.mortgaged::after) swaps at
+   the edge. The renderer has already set .mortgaged, so the first half shows
+   the old face: hide the hatch (mortgage) or draw one (unmortgage). */
+.tile-mortgage-flip, .tile-unmortgage-flip {
+    animation: tile-turn 0.6s ease-in-out;
+    z-index: 3;
+}
+
+@keyframes tile-turn {
+    0% { transform: perspective(200px) rotateY(0deg); }
+    50% { transform: perspective(200px) rotateY(90deg) scale(1.15); }
+    50.01% { transform: perspective(200px) rotateY(-90deg) scale(1.15); }
+    100% { transform: perspective(200px) rotateY(0deg); }
+}
+
+.tile-mortgage-flip.mortgaged::after {
+    animation: face-in 0.6s step-end;
+}
+
+.tile-unmortgage-flip:not(.mortgaged)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(128, 128, 128, 0.45) 4px, rgba(128, 128, 128, 0.45) 7px);
+    pointer-events: none;
+    opacity: 0;
+    animation: face-out 0.6s step-end;
+}
+
+@keyframes face-in {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+@keyframes face-out {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* A tile that changed hands in a trade or an estate (motion.js _ownerSwap):
+   after --swap-delay (its deed landing on the new owner's card) it pulses
+   twice in the new owner's colour (--flash) while its ownership mark turns
+   over from the old owner (--old-owner). Every animation fills backwards, so
+   the tile keeps the old owner's look until its turn comes. */
+.tile-owner-swap {
+    animation: owner-pulse 0.9s ease-in-out var(--swap-delay, 0ms) backwards;
+    z-index: 3;
+}
+
+@keyframes owner-pulse {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.25); box-shadow: 0 0 0 2px var(--flash), 0 0 12px 3px var(--flash); }
+    60% { transform: scale(1); }
+    80% { transform: scale(1.1); box-shadow: 0 0 0 1px var(--flash), 0 0 6px 1px var(--flash); }
+}
+
+/* Dots: the dot swells and takes the new colour */
+.tile-owner-swap .owner-dot {
+    animation: dot-swap 0.9s ease-in-out var(--swap-delay, 0ms) backwards;
+}
+
+@keyframes dot-swap {
+    0%, 25% { background: var(--old-owner); transform: scale(1); }
+    45% { transform: scale(1.8); }
+    100% { transform: scale(1); }
+}
+
+/* Tinted tiles: the wash fades from the old owner's colour to the new */
+[data-ownership="tint"] .tile-owner-swap.tile-owned {
+    animation: owner-pulse 0.9s ease-in-out var(--swap-delay, 0ms) backwards,
+        tint-swap 0.9s ease-in-out var(--swap-delay, 0ms) backwards;
+}
+
+@keyframes tint-swap {
+    0%, 25% { background: color-mix(in srgb, var(--old-owner) 45%, var(--surface)); }
+}
+
+/* Tokens: the old owner's emoji (a ghost over the new mark) grows and turns
+   edge-on; the new one turns in from the other edge */
+.owner-emoji-old {
+    position: absolute;
+    animation: emoji-out 0.9s ease-in var(--swap-delay, 0ms) forwards;
+}
+
+@keyframes emoji-out {
+    0% { transform: perspective(40px) rotateY(0deg) scale(1); opacity: 1; }
+    20% { transform: perspective(40px) rotateY(0deg) scale(1.5); }
+    50% { transform: perspective(40px) rotateY(90deg) scale(1.5); opacity: 1; }
+    50.01%, 100% { transform: perspective(40px) rotateY(90deg) scale(1.5); opacity: 0; }
+}
+
+.tile-owner-swap .owner-emoji:not(.owner-emoji-old) {
+    animation: emoji-in 0.9s ease-out var(--swap-delay, 0ms) backwards;
+}
+
+@keyframes emoji-in {
+    0%, 50% { transform: perspective(40px) rotateY(-90deg) scale(1.5); opacity: 0; }
+    50.01% { transform: perspective(40px) rotateY(-90deg) scale(1.5); opacity: 1; }
+    100% { transform: perspective(40px) rotateY(0deg) scale(1); opacity: 1; }
+}
+
+/* Things that fly between two player cards (motion.js _fly): the coin for
+   rent and other player-to-player payments (1-6 coins by the amount), and a
+   trade's deeds */
+.motion-fly {
+    position: fixed;
+    z-index: 40;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.motion-coin {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 800 10px/1 var(--font-mono);
+    color: #5c3d00;
+    background: radial-gradient(circle at 35% 30%, #ffeeb0, #e0a800 60%, #a87400);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* Bigger payments (motion.js coinCount): 4-5 coins (over $200) are a touch
+   larger, 6 (over $1000) a touch more; kept subtle so the cover's cards still
+   read underneath */
+.motion-coin-lg { width: 18px; height: 18px; font-size: 11px; }
+.motion-coin-xl { width: 20px; height: 20px; font-size: 12px; }
+
+/* A traded property: a little deed card with the tile's colour band
+   (railroads and utilities keep their deed colours) */
+.motion-deed {
+    width: 17px;
+    height: 22px;
+    border-radius: 2px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.55);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+
+.motion-deed > i {
+    display: block;
+    height: 42%;
+    background: #9e9e9e;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+}
+
+/* Game over */
+.motion-confetti {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -14px;
+    width: 7px;
+    height: 11px;
+    border-radius: 1px;
+    opacity: 0.95;
+    animation: confetti-fall var(--dur, 2.4s) linear var(--delay, 0s) forwards;
+}
+
+@keyframes confetti-fall {
+    to { transform: translate3d(var(--drift, 0), 110vh, 0) rotate(var(--spin, 720deg)); }
+}
+
+/* Game over, a CPU beat a human: shake + red vignette (Motion.defeat) */
+.motion-shake { animation: motion-shake 0.65s cubic-bezier(.36, .07, .19, .97); }
+
+@keyframes motion-shake {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 1px, 0); }
+    30%, 50%, 70% { transform: translate3d(-7px, -1px, 0); }
+    40%, 60% { transform: translate3d(7px, 1px, 0); }
+}
+
+.motion-defeat {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(150, 0, 0, 0.55) 100%);
+    animation: defeat-veil 1.8s ease-out forwards;
+}
+
+@keyframes defeat-veil {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* A player going bankrupt: the card drains to grey */
+.panel-bankrupt-now { animation: panel-drain 1s ease-out; }
+
+@keyframes panel-drain {
+    0% { opacity: 1; filter: grayscale(0); transform: scale(1.03); }
+    100% { opacity: 0.45; filter: grayscale(1); transform: scale(1); }
+}

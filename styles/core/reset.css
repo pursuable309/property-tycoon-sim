@@ -1,0 +1,30 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    /* dvh, not vh: a mobile browser's 100vh is the height with its address
+       bar hidden, so the page always scrolled by the bar's height */
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+img { max-width: 100%; }
+
+button, input, select {
+    font: inherit;
+    color: inherit;
+}
+
+button { cursor: pointer; }
+
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

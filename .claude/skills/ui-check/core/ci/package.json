@@ -1,0 +1,8 @@
+{
+  "name": "ui-check-ci",
+  "private": true,
+  "description": "Pinned browser driver for the ui-check GitHub Actions sweep (npm ci in the workflow).",
+  "dependencies": {
+    "playwright-core": "1.65.1"
+  }
+}

@@ -1,0 +1,109 @@
+/**
+ * Shared Notifications CSS
+ *
+ * Canonical copy: <projects>/.shared/css/notifications.css
+ * Don't edit a project's copy. Edit the canonical file, then run
+ * `python3 .scripts/sync_shared.py --apply` (copies are listed in .shared/manifest.json).
+ *
+ * Colours, shape and type come from the shared tokens (tokens.css + the app's brand.css): a
+ * solid status fill with the matching text token (--ok / --ok-text, --warn / --warn-text,
+ * --danger / --danger-text); info is the page's own text colour inverted. Each var() carries a
+ * fallback, so the toast still works on a page that has no tokens.css.
+ */
+
+/* ==================== BASE NOTIFICATION STYLES ==================== */
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 92%;
+    max-width: 600px;
+    background-color: var(--ok, #198754);
+    color: var(--ok-text, #fff);
+    padding: 12px 16px;
+    border-radius: var(--radius-md, 8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font, inherit);
+    font-size: var(--text-sm, 14px);
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: center;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 1100;
+    pointer-events: none;
+}
+
+/* ==================== NOTIFICATION STATES ==================== */
+
+.notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ==================== NOTIFICATION ICONS ==================== */
+
+.notification .notification-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+/* ==================== NOTIFICATION VARIANTS ==================== */
+
+.notification.success {
+    background-color: var(--ok, #198754);
+    color: var(--ok-text, #fff);
+}
+
+.notification.warning {
+    background-color: var(--warn, #ffc107);
+    color: var(--warn-text, #212529);
+}
+
+.notification.error {
+    background-color: var(--danger, #dc3545);
+    color: var(--danger-text, #fff);
+}
+
+.notification.info {
+    background-color: var(--text, #0d6efd);
+    color: var(--bg, #fff);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 480px) {
+    .notification {
+        width: calc(100% - 32px);
+        padding: 10px 14px;
+    }
+}
+
+@media (max-height: 499px) {
+    .notification {
+        width: calc(100% - 16px);
+        padding: 8px 10px;
+        font-size: var(--text-xs, 11px);
+        bottom: 10px;
+    }
+
+    .notification .notification-icon {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* Razr cover cameras (js/cover-cams.js): above the camera line, clear of the corner and the
+   bottom-left pocket's buttons. :where() keeps it at .notification's weight, so an app that
+   places its own toasts (Property Tycoon's toast-offset.js) still wins. */
+:where(html.cover-cams) .notification {
+    bottom: calc(var(--cam-h) + 6px);
+}
