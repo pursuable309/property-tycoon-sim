@@ -1,0 +1,86 @@
+/* Segmented control — a touch-friendly single-select pill row that replaces a
+   small native <select>. Built from radio inputs; see scripts/ui/segmented.js.
+   Usage: Segmented.html(name, [[v,label], ...], current[, ariaLabel, cls])
+   Look: a sunken pill track with the selected option as a raised green pill. */
+
+.segmented {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-alt);
+    max-width: 100%;
+}
+
+/* Options share the row by their labels' length, so a longer one
+   ("Custom", "Generous") isn't cut while a short one has room */
+.segmented-opt {
+    flex: 1 1 auto;
+    display: flex;
+    min-width: 0;
+    position: relative; /* keeps the hidden radio inside a scrolled row */
+}
+
+/* The radio is the state; the sibling span is the visible pill. */
+.segmented-opt input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.segmented-opt > span {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 32px;
+    padding: 0 var(--spacing-sm);
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+.segmented-opt > span:active { background: var(--border); }
+
+.segmented-opt input:checked + span {
+    background: var(--accent);
+    color: var(--accent-contrast);
+}
+
+.segmented-opt input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+/* is-scroll: pills keep their natural width; the row scrolls sideways
+   (view switchers and filters with more labels than fit 307px) */
+.segmented.is-scroll {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.segmented.is-scroll::-webkit-scrollbar { display: none; }
+.segmented.is-scroll .segmented-opt { flex: 0 0 auto; }
+.segmented.is-scroll .segmented-opt > span { padding: 0 var(--spacing-md); overflow: visible; }
+
+/* is-grid2: two pills per row, for option sets whose labels do not fit one
+   row at 307px */
+.segmented.is-grid2,
+.settings-row.stacked .segmented.is-grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    border-radius: var(--radius-lg);
+}
+
+[data-anim="off"] .segmented-opt > span { transition: none; }

@@ -1,0 +1,82 @@
+/* Style "Classic" (html[data-style="classic"]): the pre-Banker look, refined.
+   White cards on a cool grey page, the original #0072BB blue for actions,
+   a white top bar with a blue rule under it, neutral (not warm) greys.
+   Light and dark blocks set the same tokens, so the style overrides the
+   Banker values in themes/dark.css in every mode. */
+:root[data-style="classic"] {
+    --bg: #f2f4f7;
+    --surface: #ffffff;
+    --surface-alt: #e9edf2;
+    --board-bg: #d3e6d3;
+    --board-ink: var(--text);
+    --text: #1b1f24;
+    --text-muted: #5f6873;
+    --border: #c8d0da;
+    --card-border: #dde3ea;
+    --accent: #0072bb;
+    --accent-contrast: #ffffff;
+    --brand: #ffffff;
+    --brand-ink: #14324d;
+    --brand-ink-muted: rgba(20, 50, 77, 0.62);
+    --money: #17703f;
+    --pos: #17703f;
+    --neg: #c62828;
+    --chip-live-bg: #dcecf8;
+    --chip-live-ink: #0b4f80;
+    --shadow: 0 2px 8px rgba(16, 32, 56, 0.12);
+    --shadow-card: 0 1px 3px rgba(16, 32, 56, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[data-style="classic"]:not([data-theme="light"]) {
+        --bg: #000000;
+        --surface: #121418;
+        --surface-alt: #1b1e23;
+        --board-bg: #1c3024;
+        --board-ink: var(--text);
+        --text: #e4e7eb;
+        --text-muted: #98a1ab;
+        --border: #3a414b;
+        --card-border: #2a2f37;
+        --accent: #1f7fc0;
+        --accent-contrast: #ffffff;
+        --brand: #161a20;
+        --brand-ink: #e4e7eb;
+        --brand-ink-muted: rgba(228, 231, 235, 0.6);
+        --money: #6fd39b;
+        --pos: #6fd39b;
+        --neg: #ff8a80;
+        --chip-live-bg: #16334a;
+        --chip-live-ink: #9fd0f5;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        --shadow-card: none;
+    }
+}
+
+:root[data-style="classic"][data-theme="dark"] {
+    --bg: #000000;
+    --surface: #121418;
+    --surface-alt: #1b1e23;
+    --board-bg: #1c3024;
+    --board-ink: var(--text);
+    --text: #e4e7eb;
+    --text-muted: #98a1ab;
+    --border: #3a414b;
+    --card-border: #2a2f37;
+    --accent: #1f7fc0;
+    --accent-contrast: #ffffff;
+    --brand: #161a20;
+    --brand-ink: #e4e7eb;
+    --brand-ink-muted: rgba(228, 231, 235, 0.6);
+    --money: #6fd39b;
+    --pos: #6fd39b;
+    --neg: #ff8a80;
+    --chip-live-bg: #16334a;
+    --chip-live-ink: #9fd0f5;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-card: none;
+}
+
+:root[data-style="classic"] .app-header,
+:root[data-style="classic"] #screen-game .status-bar { border-bottom: 3px solid var(--accent); }
+:root[data-style="classic"] .board-ring { box-shadow: var(--shadow); }

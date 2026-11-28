@@ -1,0 +1,34 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: var(--touch-target);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+    color: var(--text);
+    font-weight: 700;
+    transition: filter 0.15s;
+}
+
+.btn:active { opacity: 0.75; }
+
+.btn-primary { background: var(--accent); color: var(--accent-contrast); }
+.btn-secondary { background: var(--surface-alt); border-color: var(--border); }
+/* Quiet: secondary without the outline (out-of-game screens) */
+.btn-quiet { background: var(--surface-alt); }
+/* Square icon button (⚙ next to Start Game) */
+.btn-square { width: var(--touch-target); padding: 0; font-size: 1.2rem; }
+.btn-warning { background: var(--warning); color: #fff; }
+.btn-success { background: var(--accent); color: var(--accent-contrast); } /* same green as every other go-ahead action */
+.btn-danger { background: var(--danger); color: #fff; }
+/* A two-tap button (Modals `confirm`) after its first tap */
+.btn-armed { background: var(--danger); color: #fff; outline: 2px solid var(--text); outline-offset: -4px; }
+.btn-lg { font-size: 1.1rem; padding: var(--spacing-md) var(--spacing-xl); }
+
+@media (min-width: 271px) {
+    .btn:hover { filter: brightness(1.08); }
+}
+.btn-sm { font-size: 0.85rem; padding: 4px var(--spacing-md); min-height: 32px; }

@@ -1,0 +1,36 @@
+/* Standard mobile / tablet / desktop (>= 481px per MOTOROLA.md) */
+@media (min-width: 481px) and (min-height: 500px) {
+    body { font-size: 15px; }
+
+    .tile { font-size: 8.5px; }
+
+    .game-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 260px;
+        grid-template-rows: auto auto 1fr;
+        gap: var(--spacing-sm);
+        grid-template-areas:
+            "status status"
+            "board  side"
+            "board  controls";
+        align-items: start;
+    }
+
+    .status-bar { grid-area: status; }
+    .board { grid-area: board; }
+    .controls {
+        grid-area: controls;
+        align-content: start;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .player-panels {
+        grid-area: side;
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 900px) and (min-height: 500px) {
+    .tile { font-size: 10px; }
+}

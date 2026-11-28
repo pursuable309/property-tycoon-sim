@@ -1,0 +1,38 @@
+{
+  "url": "http://localhost:8005/",
+  "repo": "../../..",
+  "projectId": "property-tycoon",
+  "_sizes": "the 9 shared size presets: core/lib/sizes.json",
+  "cdp": "http://127.0.0.1:9222",
+  "outRoot": "screenshots/ui-check",
+  "matrix": {
+    "sizes": ["cover-cams", "cover", "cover-wide", "internal"],
+    "seats": [4],
+    "theme": ["light"],
+    "style": ["banker"],
+    "buttons": ["centre"],
+    "cams": ["auto"],
+    "anim": ["off"],
+    "ownership": ["dots"],
+    "content": ["normal"]
+  },
+  "content": {
+    "normal": {
+      "names": ["Alexandra", "Bo", "Chen", "Dmitri", "Esperanza", "Fu", "Gil", "Hal"]
+    },
+    "stress": {
+      "note": "worst-case widths: full 9-character names (SetupUI.NAME_MAX) with wide letters, 5-digit cash, big bids, rents and trades",
+      "names": ["Cassandra", "WWWWWWWWW", "Wilhelmin", "Montgomer", "Gwendolyn", "MMMMMMMMM", "Bartholom", "Woodworth"],
+      "cash": [12480, 18860, 10430, 19015, 10777, 15500, 16615, 99990]
+    }
+  },
+  "settings": {
+    "cpuSpeed": "fast",
+    "sound": "off",
+    "autoRoll": false,
+    "autoEndTurn": false
+  },
+  "seed": 7,
+  "prune": { "keepLocal": 6, "keepGh": 4, "scratchHours": 24, "minGuardMin": 30 },
+  "diff": { "threshold": 0.001, "channelTol": 16 }
+}

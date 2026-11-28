@@ -1,0 +1,1202 @@
+/* Motorola external (cover) display: short (the internal display is >= 500
+   tall), so height < 500 is the discriminator. As a Chrome app the Razr Ultra
+   2025 cover reads 361x308 or 361x407 (full height: the cameras then sit
+   over the bottom-right corner, see "Cover cameras" at the end). Any wider short screen (a landscape
+   805x361) gets this layout too. Matches ScreenManager.getScreenType().
+   Ultra-compact ring board, controls inside board center, full-screen modals. */
+@media (max-height: 499px) {
+    :root {
+        --spacing-xs: 2px;
+        --spacing-sm: 4px;
+        --spacing-md: 6px;
+        --spacing-lg: 8px;
+        --spacing-xl: 10px;
+        --radius-sm: 2px;
+        --radius-md: 4px;
+        --radius-lg: 6px;
+        --touch-target: 24px;
+    }
+
+    /* Sizes every rem-sized component (modals, trade builder, deeds…) at
+       once; px overrides below handle the board and side column. */
+    html { font-size: 13px; }
+    body { font-size: 10px; }
+
+    h1 { font-size: 1.2rem; }
+    h2 { font-size: 1rem; }
+
+    .screen { padding: 2px; }
+
+    /* Ultra-compact cover display: even the corner/action labels are dropped. */
+    .tile-name,
+    .tile-go .tile-name, .tile-jail .tile-name,
+    .tile-parking .tile-name, .tile-gotojail .tile-name,
+    .tile-chance .tile-name, .tile-chest .tile-name { display: none; }
+    .tile-band { height: 30%; }
+
+    .status-logo { display: none; }
+
+    /* Landscape split: square board on the left, a drag handle
+       (.cover-split, CoverSplit), then the player column under a slim status
+       row (turn number + note / log / owners / settings icons). The game
+       screen is pinned to the viewport so the page itself never scrolls.
+       Sizes are viewport-relative: the Chrome app reads the cover at
+       361x308 or 361x407.
+       --ext-col is the column width (default 104px; dragging the handle
+       sets it inline): the board takes the full height unless that would
+       leave the column narrower than --ext-col, then it shrinks. */
+    #screen-game {
+        --ext-col: 104px;
+        --ext-handle: 10px; /* keep in sync with CoverSplit.HANDLE */
+        height: 100dvh;
+        overflow: hidden;
+    }
+    #screen-game .game-layout {
+        display: grid;
+        grid-template-columns: auto var(--ext-handle) minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        column-gap: 0;
+        row-gap: 2px;
+        height: 100%;
+    }
+    #screen-game .board-ring {
+        --board: min(calc(100dvh - 8px), calc(100vw - var(--ext-col) - var(--ext-handle) - 8px));
+        grid-column: 1;
+        grid-row: 1 / -1;
+        /* Top-aligned: when the board is shorter than the screen, the spare
+           room collects at the bottom, where toasts show (toast-offset.js) */
+        align-self: start;
+        width: var(--board);
+        height: var(--board);
+        max-width: none;
+        margin: 0;
+    }
+
+    /* Drag handle: full-height touch strip with a short grip in the middle */
+    .cover-split {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+        cursor: col-resize;
+        outline: none;
+    }
+    .cover-split::before {
+        content: '';
+        width: 4px;
+        height: 36px;
+        border-radius: 2px;
+        background: var(--border);
+    }
+    .cover-split.is-dragging::before,
+    .cover-split:focus-visible::before { background: var(--accent); height: 56px; }
+
+    /* The bar also spans the drag handle's top (the handle still drags
+       below it): the default column (108px) alone is narrower than the
+       turn number + 4 x 24px icons (WCAG 2.5.8 target size). */
+    #screen-game .status-bar {
+        grid-column: 2 / 4;
+        grid-row: 1;
+        position: relative;
+        z-index: 1;   /* over the handle, which comes later in the DOM */
+        container-type: inline-size;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0;
+        padding: 0;
+        font-size: 11px;
+    }
+    /* The turn number takes what 4 x 24px icons leave (a long game's
+       "T150" shrinks to fit: FitText), so it never squeezes them */
+    #screen-game .status-turn {
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: calc(100% - 96px);
+        padding: 0 1px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    /* The four icons share what the turn number leaves, so they fit the
+       column at every width. */
+    #screen-game .status-bar .btn-settings {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 26px;
+        margin: 0;
+        font-size: 14px;
+    }
+    /* Narrow column: turn number on its own line above the icons, then the
+       icons two-up. (Queries the status bar's own width: a container can't
+       query itself, but its children can.) */
+    @container (max-width: 100px) {
+        #screen-game .status-turn { flex-basis: 100%; max-width: none; text-align: center; font-size: 10px; }
+        /* A real basis, or the zero-basis icons "fit" beside the turn
+           number at zero width instead of wrapping under it */
+        #screen-game .status-bar .btn-settings { flex: 1 1 16px; min-height: 24px; }
+    }
+    @container (max-width: 64px) {
+        #screen-game .status-bar .btn-settings { flex: 0 0 50%; }
+    }
+
+    .player-panels {
+        grid-column: 3;
+        grid-row: 2;
+        container-type: inline-size;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        scrollbar-width: none;
+        min-height: 0;
+        gap: 2px;
+    }
+    /* Centre the stack vertically when it is shorter than the column; auto
+       margins (unlike justify-content: center) never push the first card
+       out of reach above the scroll top when 8 seats overflow. */
+    .player-panels > :first-child { margin-top: auto; }
+    .player-panels > :last-child { margin-bottom: auto; }
+    /* Stacked card per player — the column is only ~100px wide at the 270px
+       zoom, so name / cash / meta each get their own line instead of the
+       name being squeezed to "N…" beside the cash. rem sizes follow the html
+       base, so the 378px zoom gets larger text. 5+ seats drop the meta line
+       (panels-compact, set by Panels.render) to keep rows short; the
+       property count moves beside the cash so it is still shown. */
+    .player-panel { flex: 0 0 auto; padding: 2px 4px; border-left-width: 3px; line-height: 1.15; }
+    .panel-name { font-size: 1rem; }
+    .panel-cash { font-size: 1.05rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .cash-delta { font-size: 0.75em; margin-left: 2px; }
+    .panel-meta {
+        font-size: 0.8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .panels-compact .panel-meta { display: none; }
+    .panels-compact .player-panel { padding: 1px 4px; line-height: 1.05; }
+    .panels-compact .panel-name, .panels-compact .panel-cash { font-size: 0.95rem; }
+    /* Cards a few px too tall for the column (Panels._fit): drop the gaps
+       and vertical padding instead of scrolling for nothing */
+    .player-panels.panels-tight { gap: 0; }
+    .player-panels.panels-tight .player-panel { padding-top: 0; padding-bottom: 0; }
+    /* The cash (and a transient delta chip) gives way before the count wraps. */
+    .panels-compact .panel-cash { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+    .panels-compact .panel-top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        column-gap: 4px;
+    }
+    .panels-compact .panel-name { flex: 1 0 100%; }
+    .panels-compact .panel-props {
+        display: block;
+        margin-left: auto;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    /* Cards follow the column width the handle leaves them (container
+       queries on .player-panels): name + cash on two lines, then one line of
+       token + cash. The coloured left edge, the token and the current-turn
+       outline still say who is who. Chrome's narrowest column (board at
+       full height) is ~89px, so the one-line tier starts above that. */
+    @container (max-width: 100px) {
+        .panel-meta, .panels-compact .panel-props { display: none; }
+        .player-panel, .panels-compact .player-panel { padding: 1px 3px; line-height: 1.1; }
+    }
+    @container (max-width: 92px) {
+        .panel-top, .panels-compact .panel-top {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: baseline;
+            gap: 3px;
+        }
+        .panel-name, .panels-compact .panel-name { flex: 0 0 auto; text-overflow: clip; }
+        .panel-name-text, .cash-delta { display: none; }
+        .panel-cash, .panels-compact .panel-cash { font-size: 1rem; min-width: 0; overflow: hidden; }
+        .player-panel, .panels-compact .player-panel { padding: 2px 3px; }
+    }
+
+    /* Board center scales with the board (--board, set on .board-ring) so it
+       fits every zoom. Three rows: dice beside the turn banner, the latest
+       event (in the space left over), then an icon-only 3-column button
+       grid (max 5 buttons in any phase = 2 rows). --feed is the event text
+       size, shared by the event, the CPU-thinking line and the debt banner. */
+    .board-center {
+        --feed: clamp(12px, calc(var(--board) * 0.066), 19px);
+        /* Button height (.board-center .btn); the button row reserves two */
+        --ctl-btn: clamp(24px, calc(var(--board) * 0.12), 32px);
+        container: board-center / size;   /* its size is the board's, not its content's */
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        align-items: center;
+        padding: 3px;
+        gap: 3px 6px;
+    }
+    /* Big dice; the turn banner beside them wraps to (at most) two lines
+       in the height the dice give the row */
+    .dice-area { grid-area: 1 / 1; font-size: calc(var(--board) * 0.14); gap: 3px; }
+    .die { padding: 1px 2px; }
+    /* Just the name, big on one line (shrunk to fit, never wrapped): no
+       "Turn" label and no "on <tile>" (the board shows where they stand) */
+    .turn-banner > .turn-prefix,
+    .turn-banner > .turn-sep,
+    .turn-banner > .turn-where { display: none; }
+    .turn-banner {
+        grid-area: 1 / 2;
+        min-width: 0;
+        text-align: right;
+        font-size: clamp(14px, calc(var(--board) * 0.095), 26px);
+        line-height: 1.15;
+    }
+    .turn-banner > .turn-name {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+        --fit-min: 0.45;
+    }
+    /* Debt / can't afford: the turn line keeps one line (name cut with …)
+       and the money note (.turn-debt) goes under it in red, one half per
+       line with no " · " ("Owes $600" / "$297 short") */
+    .turn-banner:has(.turn-debt) {
+        display: block;
+        white-space: nowrap;
+        text-overflow: clip;
+    }
+    .turn-debt {
+        display: block;
+        color: var(--danger);
+        font-size: 0.65em;
+    }
+    .turn-debt-sep { display: none; }
+    .turn-debt-part {
+        display: block;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+
+    /* Feed (board.css): the card fills the room between the dice and the
+       buttons, the latest line up to 4 lines. The clamp sits on the inner
+       span with no bottom padding (padding would show a sliver of the first
+       hidden line); the card's bottom spacing is the span's margin. */
+    .announce {
+        grid-area: 2 / 1 / 3 / -1;
+        align-self: stretch;
+        min-height: 0;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 4px 6px 0;
+        font-size: var(--feed);
+        line-height: 1.25;
+        text-align: left;
+    }
+    .announce > span {
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+    }
+    /* Shorter board centres: fewer lines, so the event always fits whole
+       under the big dice (Chrome's usual ~192px centre fits 3) */
+    @container board-center (max-height: 210px) {
+        .announce > span { -webkit-line-clamp: 3; }
+    }
+    @container board-center (max-height: 150px) {
+        .announce > span { -webkit-line-clamp: 2; }
+    }
+    /* Tiny centre (Firefox 270x195, ~118px): smaller dice and a one-line
+       banner, so the event keeps its two lines */
+    @container board-center (max-height: 130px) {
+        .dice-area { font-size: calc(var(--board) * 0.1); }
+        .announce { padding-top: 1px; line-height: 1.15; }
+        .announce > span { margin-bottom: 1px; }
+    }
+    /* CPU turn (no buttons in the centre) on a centre tall enough
+       (every cover but the smallest, 270x195): the feed card drops to the
+       bottom, the "is thinking…" line inside its foot, so the strip under
+       the dice is a free slot for toasts (ToastOffset._boardBand), which
+       mostly come on CPU turns. On a human turn the buttons need the room:
+       the feed stays put and a toast covers its top, as before. (The wide
+       cover's buttons live in the player column: no :has(> .controls).) */
+    @container board-center (min-height: 180px) {
+        .board-center:has(> .controls):not(:has(> .controls > .btn)) > .announce {
+            grid-area: 2 / 1 / 4 / -1;
+            margin-top: calc(var(--feed) * 2.6 + 10px);
+            padding-bottom: calc(var(--feed) * 1.3 + 4px);
+            justify-content: flex-end;
+        }
+        .board-center:has(> .controls):not(:has(> .controls > .btn)) > .controls {
+            min-height: 0;
+            z-index: 1;
+            padding-bottom: 4px;
+        }
+    }
+
+    /* One row of icon buttons, informational ones left (Properties, Deed),
+       actions right (Trade, Auction, Pay); the turn's main action (Roll /
+       Buy / End Turn) full width below, the same sides as the internal
+       display's two columns */
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+    }
+    .controls > .btn { flex: 1 1 0; min-width: 0; }
+    .controls > .ctl-left { order: 1; }
+    .controls > .ctl-right { order: 2; }
+    .controls > .ctl-main { order: 3; flex-basis: 100%; }
+    .board-center .controls { grid-area: 3 / 1 / 4 / -1; padding-top: 0; }
+    .controls > .debt-banner,
+    .controls > .cpu-thinking {
+        flex-basis: 100%;
+        font-size: calc(var(--feed) * 0.9);
+        line-height: 1.2;
+        padding: 2px 4px;
+    }
+    .controls > .cpu-thinking { text-align: center; }
+    /* Plain line on the cover, in the board centre and the auction sheet
+       alike (a wide cover's column keeps the pill, see the end of this file) */
+    .board-center .controls > .cpu-thinking-pill,
+    .auction-body > .cpu-thinking-pill {
+        display: block;
+        min-height: 0;
+        background: none;
+        box-shadow: none;
+        color: var(--text-muted);
+        font-style: italic;
+        font-weight: 400;
+        white-space: normal;
+    }
+    .board-center .cpu-thinking-token, .auction-body .cpu-thinking-token { display: none; }
+    .board-center .controls { align-self: end; }
+    /* The button row always keeps two rows of buttons' height (every human
+       phase has a row + the main action), so the latest event doesn't drop
+       when a CPU's turn swaps the buttons for the one-line thinking note.
+       The note sits at the bottom, where the main button was. */
+    .board-center .controls {
+        box-sizing: border-box;
+        min-height: calc(2 * var(--ctl-btn) + 2px + var(--spacing-xs));
+        align-content: flex-end;
+    }
+    .controls > .debt-banner {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+    .btn {
+        font-size: 9px;
+        min-height: 24px;
+        padding: 2px 4px;
+    }
+    .btn .btn-icon { font-size: 12px; }
+    .btn-lg { font-size: 10px; }
+    /* Labels: shown while the centre is wide enough (board.css). The main
+       action (Roll / Buy $200 / End Turn) always keeps its icon and label. */
+    .board-center .btn-lg .btn-text { display: inline; white-space: nowrap; }
+    /* Board-centre buttons grow with the board (larger at the 378px zoom). */
+    .board-center .btn {
+        min-height: var(--ctl-btn);
+        font-size: clamp(9px, calc(var(--board) * 0.048), 12px);
+    }
+    .board-center .btn .btn-icon { font-size: clamp(12px, calc(var(--board) * 0.068), 17px); }
+
+    /* Modals become full-screen sheets. dvh, not vh: Firefox's 100vh includes
+       the area behind its bottom toolbar, which cut off the title and the
+       footer buttons. Header + footer stay put; only #modal-body scrolls. */
+    .modal {
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        padding: 4px 6px;
+        font-size: 1rem; /* not body's 10px: modal text follows the html base */
+    }
+    #modal-title {
+        font-size: 1.15rem;
+        margin: 0;
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    /* Player cash strip, moved into the title row by Modals.show */
+    .modal-head { gap: 6px; }
+    .modal-head .modal-cash {
+        flex: 0 1 auto;
+        min-width: 0;
+        margin: 0;
+        padding: 1px 6px;
+        gap: 4px;
+        white-space: nowrap;
+    }
+    .modal-head .modal-cash strong { min-width: 0; overflow: hidden; text-overflow: clip; --fit-min: 0.45; }
+    /* A title that names a player ("Trade offer from …") shrinks further for a long name */
+    #modal-title:has(.trade-player-tag) { --fit-min: 0.45; }
+    .modal-head .modal-close { padding: 2px 4px; min-width: 24px; min-height: 24px; }   /* 24px tap target */
+    /* Game stats / history detail: the sheet's body already scrolls, so
+       no second scroll box inside it */
+    .history-detail, .tuning-body { max-height: none; overflow-y: visible; }
+    .modal-buttons { margin-top: 4px; gap: 3px; }
+    /* Same sides as the internal sheets, in one row: Close/Cancel, then
+       look-only buttons (Owners, Game stats), then actions, the decisive
+       action last (at the right edge). Footers split into rows by a break
+       (auction) keep their order. */
+    .modal-buttons > .btn-dismiss { order: -2; }
+    /* `top` buttons (deed actions) lead the one row; Close ends it */
+    .modal-buttons > .btn-top { order: -3; }
+    .modal-buttons:not(:has(.modal-btn-break)) > .btn-info:not(.btn-dismiss) { order: -1; }
+    .modal-buttons:not(:has(.modal-btn-break)) > .btn-main { order: 99; }
+    .modal-buttons .btn .btn-text { display: inline; }
+    .modal-buttons .btn { font-size: 1rem; min-height: 26px; padding: 2px 8px; }
+    /* Four or more in the one row (trade offer): tighter sides so every
+       label fits */
+    .modal-buttons:has(> .btn:nth-of-type(4)) > .btn { padding-inline: 4px; }
+    /* One-row footers span the sheet's full width: the buttons share the
+       row in proportion to their labels (the decisive action gets a bigger
+       share), so both edges line up with the body instead of a ragged
+       cluster at the right, and nothing wraps onto a lone second row; a
+       label that still can't fit ellipsizes. The auction's rows (split by
+       breaks) fill the same way, its bid buttons keep their equal shares. */
+    .modal-buttons:not(:has(.modal-btn-break)) { flex-wrap: nowrap; }
+    .modal-buttons > .btn:not(.btn-grow) {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .modal-buttons:not(:has(.modal-btn-break)) > .btn-main { flex-grow: 2; }
+    /* Five or more buttons (Game Over) can't share one row: the decisive
+       action takes a full-width row under the rest */
+    .modal-buttons:not(:has(.modal-btn-break)):has(> .btn:nth-of-type(5)) { flex-wrap: wrap; }
+    .modal-buttons:not(:has(.modal-btn-break)):has(> .btn:nth-of-type(5)) > .btn { padding-inline: 4px; font-size: 0.88rem; }
+    .modal-buttons:not(:has(.modal-btn-break)):has(> .btn:nth-of-type(5)) > .btn-main { flex-basis: 100%; }
+    .modal-cash { font-size: 1rem; padding: 1px 4px; margin: 2px 0; }
+    .modal-cash-amount { font-size: 1rem; }
+
+    /* Body fills the sheet so the footer sits on the bottom edge (as in the
+       trade builder) instead of floating mid-screen under short content. */
+    #modal-body { flex: 1 1 auto; }
+    /* Size container (its height comes from the sheet, not its content), so
+       sheets can scale their text to the room they have (cqh units). */
+    #modal-body { container: sheet / size; }
+
+    /* The screen is landscape: like the trade builder's give/get columns,
+       long single-column lists go two-up so they fit without scrolling. */
+    .deed-band { padding: 1px 4px; margin-bottom: 2px; font-size: 11px; }
+    /* Standalone deed (tile modal only; the copies inside trade columns
+       and the auction stay one column): rent ladder down the left, price /
+       costs / owner down the right. dense packing lets each column fill
+       from the top independently. Railroads/utilities have no ladder (and
+       a long rent line), so they keep the single column. */
+    #modal-body > .deed-table:has(.deed-rent) tbody,
+    .auction-deed .deed-table:has(.deed-rent) tbody {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-flow: row dense;
+        column-gap: 8px;
+    }
+    #modal-body > .deed-table:has(.deed-rent) tr,
+    .auction-deed .deed-table:has(.deed-rent) tr {
+        grid-column: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+    }
+    #modal-body > .deed-table:has(.deed-rent) tr.deed-rent,
+    .auction-deed .deed-table:has(.deed-rent) tr.deed-rent { grid-column: 1; }
+    .auction-deed .deed-table tr.deed-price { display: none; }   /* the title shows the list price */
+    #modal-body > .deed-table:has(.deed-rent) td,
+    .auction-deed .deed-table:has(.deed-rent) td { padding: 1px 4px; border-bottom: 0; }
+    #modal-body > .deed-table tr.deed-rent-active td:first-child { flex: 1 1 auto; }
+    #modal-body > .deed-table:has(.deed-rent) .deed-owner td:last-child {
+        min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: clip; --fit-min: 0.45;
+    }
+    /* The deed's rows scale to the sheet's height (6 ladder rows on the
+       left), instead of small rows over an empty bottom half */
+    #modal-body > .deed-table:has(.deed-rent) { font-size: clamp(1rem, calc(100cqh / 12.5), 1.3rem); }
+    #modal-body > .deed-table:has(.deed-rent) td { padding-block: clamp(1px, 1.2cqh, 5px); }
+
+    .ownership, .portfolio {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2px 4px;
+    }
+    .ownership > .trade-group-label,
+    .portfolio > .trade-group-label,
+    .portfolio > .modal-cash,
+    .portfolio > p { grid-column: 1 / -1; }
+    .trade-group-label { margin-top: 2px; }
+    .ownership-row, .portfolio-row { min-height: 24px; padding: 1px 4px; gap: 3px; }   /* 24px: WCAG 2.5.8 */
+    /* Owners: the whole row is one line that shrinks to fit (FitText):
+       the name never gets squeezed out by the houses and the owner */
+    .ownership-row {
+        grid-template-columns: minmax(max-content, 1fr) auto auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .portfolio-row {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .group-manage-btn { min-height: 24px; padding: 1px 6px; margin-left: auto; }   /* 24px: WCAG 2.5.8 */
+
+    /* Group house manager: the rows share the sheet's height (2-3 of them),
+       with larger names and house marks and big square +/- buttons; the
+       bulk row and the plan summary stay one slim line each. */
+    .group-manage { height: 100%; display: flex; flex-direction: column; gap: 3px; }
+    .group-manage .group-cash { margin: 0; font-size: 0.85rem; }
+    .group-manage .group-stock-warning { margin: 0; padding: 2px 4px; }
+    .group-row {
+        flex: 1 1 0;
+        min-height: 0;
+        grid-template-columns: minmax(0, 1fr) auto auto auto;
+        gap: 6px;
+        padding: 0;
+    }
+    .group-row-name { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: clip; }
+    .group-row-houses { font-size: 1.15rem; min-width: 4em; }
+    .group-btn {
+        width: 44px;
+        min-width: 0;
+        align-self: center;
+        height: calc(100% - 2px);   /* the row's height, up to 40px */
+        max-height: 40px;
+        min-height: 0;
+        font-size: 1.4rem;
+    }
+    .group-bulk { margin-top: 0; gap: 4px; }
+    .group-bulk .btn { min-height: 30px; font-size: 1rem; }
+    .group-plan-summary {
+        margin: 0;
+        padding: 2px 4px;
+        min-height: 1.7em;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    /* Trade builder: give / get side by side at every zoom (trade.css goes
+       single-column under 350px), with tighter cash controls and property
+       rows so more deeds show per screen. */
+    .segmented { padding: 2px; }
+    .segmented-opt > span { min-height: 26px; }
+    .segmented.is-styles .segmented-opt > span { padding: 0 3px; }
+    /* Settings: label beside its pills (landscape sheet), not above them */
+    .settings-row.stacked { flex-direction: row; align-items: center; gap: 6px; }
+    .settings-row.stacked .settings-label { flex: 0 0 34%; line-height: 1.15; }
+    .settings-row.stacked .segmented { flex: 1 1 auto; width: auto; min-width: 0; }
+    .trade-partner-row { margin-bottom: 3px; gap: 2px 6px; }
+    .trade-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px; margin-top: 2px; }
+    .trade-balance-verdict { margin-left: auto; }
+    .trade-col { padding: 3px; gap: 2px; }
+    .trade-col h3 { margin: 0; font-size: 1rem; }
+    .trade-cash { gap: 2px; font-size: 0.9rem; }
+    .trade-cash-label { display: none; }   /* the column heading says whose cash */
+    /* Builder fills the sheet: the give/get columns take the height left
+       under the partner pills and each scrolls its own deed list, so both
+       sides stay visible together. "Trade with:" goes (the pills say it). */
+    .trade-builder { height: 100%; display: flex; flex-direction: column; }
+    .trade-partner-label { display: none; }
+    .trade-builder > .trade-columns { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+    .trade-builder .trade-col { min-height: 0; overflow-y: auto; }
+    .trade-cash-input { padding: 0 3px; height: 22px; }
+    .trade-cash-step { width: 22px; height: 22px; }
+    /* One line per deed: the name is a bare text node, which a flex row
+       can't ellipsize, so the row becomes a block (the checkbox square is
+       the ::before, the real input is positioned out of the flow). */
+    .trade-prop, .trade-jailcard {
+        display: block;
+        min-height: 0;
+        padding: 2px 4px;
+        font-size: 0.9rem;
+        line-height: max(1.35em, 20px);   /* a 24px row at least (WCAG 2.5.8) */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .trade-prop::before, .trade-jailcard::before {
+        width: 13px;
+        height: 13px;
+        margin-right: 3px;
+        vertical-align: middle;
+        position: relative;
+        top: -1px;
+    }
+    .trade-group-label { margin-top: 1px; }
+    .trade-prop-wrap { gap: 2px; }
+    .trade-deed-btn { min-width: 24px; min-height: 24px; }   /* WCAG 2.5.8 target size */
+
+    /* Incoming trade offer: get / give columns side by side filling the
+       sheet, the value check along the bottom, a counter note on top. The
+       card text scales to the room (sheet height over the longer side's
+       cards, --items from trade-ui.js) and the cards share the column's
+       height up to a deed-like size, so a one-for-one offer shows two big
+       cards and a long one shrinks, then scrolls inside its column. */
+    .offer-body {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 4px 6px;
+        height: 100%;
+        --offer-font: clamp(0.8rem, calc(100cqh / (var(--items, 2) * 2.6 + 4.5)), 1.2rem);
+    }
+    .offer-body > :not(.offer-side) { grid-column: 1 / -1; }
+    .offer-body > .trade-counter-note { grid-row: 1; margin: 0; }
+    .offer-body > .offer-side { grid-row: 2; }
+    .offer-body > .trade-balance { grid-row: 3; margin: 0; padding: 2px 6px; font-size: 0.85rem; }
+    .offer-body .trade-balance-verdict { font-size: 0.75rem; }
+    .offer-side {
+        gap: 4px;
+        padding: 4px;
+        min-width: 0;
+        min-height: 0;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        font-size: var(--offer-font);
+    }
+    .offer-side h3 { font-size: 1.1rem; }
+    /* Grow to share the room, never shrink below their text (a long side
+       scrolls instead) */
+    .offer-side > .offer-card, .offer-card-wrap { flex: 1 0 auto; max-height: 4.8em; }
+    .offer-card-wrap > .offer-card { flex: 1 0 auto; }
+    .offer-card-wrap:has(> .trade-deed:not([hidden])) { max-height: none; flex: 0 0 auto; }
+    .offer-card { padding: 3px 6px 3px 11px; }
+    .offer-card::before { width: 5px; }
+    .offer-side .trade-deed { font-size: 1rem; }
+
+    /* Card draws: the one line of text centred in the sheet, readable size. */
+    #modal-body:has(> .card-text) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .card-text { font-size: clamp(1.4rem, 11cqh, 2rem); margin: 0; padding: 0 8px; }
+
+    /* Game log: the list fills the sheet down to the footer (its 60vh cap
+       left a strip blank), in a larger font */
+    .log-modal { height: 100%; }
+    .log-full-list { max-height: none; flex: 1 1 auto; min-height: 0; font-size: 0.95rem; }
+
+    /* Auction (bid sheet and spectator view): the list price joins the
+       title row, the colour band shrinks to a strip, and the bidder table
+       grows to fill the sheet with its text scaled to the room per row
+       (--rows = bidders, set by auction-ui.js), so 3-4 bidders read big and
+       8 still fit without scrolling. The deed stays a one-line summary; open,
+       it uses the standalone deed's two-column ladder and the body scrolls. */
+    /* Title row (name, ⓘ, list price), the big auction title and the
+       colour strip: shared on every display (components/sheet.css) */
+    .auction-body { min-height: 100%; display: flex; flex-direction: column; }
+    .auction-trade-note { font-size: 0.9rem; padding: 1px 4px; margin: 0 0 2px; }
+    .bidder-table {
+        flex: 1 1 auto;
+        margin: 0;
+        font-size: clamp(1rem, calc(100cqh / (var(--rows, 4) + 1.5) * 0.5), 1.8rem);
+    }
+    .auction-body:has(.auction-deed:not([hidden])) .bidder-table { flex: none; }
+    .bidder-table thead { display: none; }
+    .bidder-table td { padding: 0 4px; line-height: 1.2; }
+    .bidder-name-cell { max-width: 0; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: clip; --fit-min: 0.45; }
+    .bidder-cash { font-size: 0.75em; }
+    .bidder-bid { font-size: 1em; white-space: nowrap; }
+    .bidder-you { display: none; }     /* the accent row marks whose bid it is */
+    .auction-deed { margin: 0 0 2px; border: 0; padding: 0; font-size: 0.9rem; }
+    .cpu-thinking { margin: 2px 0 0; }
+    /* Watching a CPU bid: no "is deciding…" line under the table (on the
+       short sheet it pushed the body into a scrollbar); the deciding row
+       gets the spinner by its bid and a dashed turn edge instead */
+    .auction-body > .cpu-thinking { display: none; }
+    .bidder-spinner { display: inline-block; font-size: 0.8em; }
+    .bidder-deciding td:first-child { box-shadow: inset 4px 0 0 var(--bid-turn-edge); }
+    /* Many bidders: the table's own minimum shrinks so 8 rows fit at 195px */
+    .auction-body:has(.bidder-table tr:nth-child(6)) .bidder-table {
+        font-size: clamp(0.85rem, calc(100cqh / (var(--rows, 8) + 1.5) * 0.55), 1.8rem);
+    }
+
+    /* Opening roll-off: larger rows centred in the sheet (margin auto keeps
+       the top reachable if it ever overflows); 5+ seats go two-up so 8
+       players still fit at the 270px zoom. */
+    #modal-body > .rolloff { margin: auto 0; }
+    #modal-body:has(> .rolloff) { display: flex; flex-direction: column; }
+    .rolloff-row { font-size: 1.25rem; padding: 4px 2px; }
+    .rolloff-winner { font-size: 1.4rem; margin-top: 8px; }
+    .rolloff:has(> .rolloff-row:nth-of-type(5)) {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 10px;
+    }
+    .rolloff:has(> .rolloff-row:nth-of-type(5)) > :not(.rolloff-row) { grid-column: 1 / -1; }
+    .rolloff:has(> .rolloff-row:nth-of-type(5)) .rolloff-row { font-size: 0.95rem; gap: 4px; padding: 2px 0; }
+    .rolloff:has(> .rolloff-row:nth-of-type(5)) .rolloff-row > span { white-space: nowrap; }
+    .rolloff:has(> .rolloff-row:nth-of-type(5)) .rolloff-name { min-width: 0; overflow: hidden; text-overflow: clip; }
+    .rolloff:has(> .rolloff-row:nth-of-type(5)) .rolloff-round { margin: 0; }
+
+    /* Toasts (shared notifications.css, never edited here): bottom-centre,
+       in the app's colours and radius with left-aligned text up to 2 lines
+       (same look as the internal display). toast-offset.js keeps them at the
+       bottom (under the board or above a sheet's buttons)
+       and shows only the newest one. */
+    .notification {
+        width: calc(100% - 12px);
+        justify-content: flex-start;
+        gap: 6px;
+        font-size: 12px;
+        line-height: 1.25;
+        padding: 6px 10px;
+        bottom: 6px;
+        border-radius: var(--radius-md);
+        text-align: left;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+        transition: transform 0.3s ease, opacity 0.3s ease, bottom 0.2s ease;
+    }
+    /* Up to --toast-lines lines, clipped at a line edge, never "…":
+       FitText (fit-text.js) shrinks a toast whose text needs more */
+    .notification > span {
+        display: block;
+        max-height: calc(var(--toast-lines, 2) * 1lh);
+        overflow: hidden;
+        text-overflow: clip;
+    }
+    .notification .notification-icon { margin-right: 0; width: 14px; height: 14px; }
+    .notification.info { background-color: var(--notify-info); }
+    .notification.success { background-color: var(--success); }
+    .notification.error { background-color: var(--danger); }
+    .notification.toast-overflow { opacity: 0; }
+    .notification.toast-gone { visibility: hidden; transition: none; }
+    /* Top-edge toasts (the board centre's top, a sheet's title; set by
+       toast-offset.js): slide down from above */
+    .notification.toast-top {
+        bottom: auto;
+        transform: translateX(-50%) translateY(-100%);
+        transition: transform 0.3s ease, opacity 0.3s ease, top 0.2s ease;
+    }
+    .notification.toast-top.show { transform: translateX(-50%) translateY(0); }
+    /* No room for two lines where it sits: one (shrunk to fit) */
+    .notification.toast-1line > span { --toast-lines: 1; }
+    .notification.toast-1line { padding-block: 3px; }
+    /* The cameras' pocket is narrow: up to three lines there when they fit
+       (toast-offset.js cuts it to one when they don't) */
+    html.cover-cams .notification:not(.toast-1line) > span { --toast-lines: 3; }
+    /* Long toasts (ToastOffset.showLong, trades): the whole text, tap to dismiss */
+    .notification.toast-long > span { max-height: none; overflow: visible; }
+    .notification.toast-long { cursor: pointer; }
+    /* The strip under the board (smallest cover, toast-offset.js
+       _underBoard): slimmer, up to 2 lines (1 when 2 don't fit); a long
+       toast keeps its whole text and grows up over the board's edge */
+    .notification.toast-clamp { padding-block: 4px; }
+    .notification.toast-clamp.toast-1line { padding-block: 3px; }
+    .notification.toast-long.toast-clamp { padding-inline: 6px; gap: 4px; font-size: 10px; line-height: 1.25; }
+
+    /* ==================== Home screen ==================== */
+
+    /* The logo and the four tabs share one slim brand row; the title is
+       dropped visually (kept for screen readers), so the first screenful is
+       content instead of branding. */
+    .app-header-inner { padding: 3px 6px 0; column-gap: 6px; }
+    .app-logo { width: 26px; height: 26px; border-radius: 6px; }
+    .app-title {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+    .app-header-inner { padding-bottom: 3px; }
+    .home-subtabs { grid-column: 2; margin: 0; }
+    .setup-tab-panel { padding: 6px 6px 8px; }
+
+    .continue-card { padding: 6px 8px; margin-bottom: 6px; }
+    .continue-title { font-size: 1.05rem; }
+    .continue-token { width: 22px; height: 22px; font-size: 0.75rem; margin-left: -5px; }
+    .continue-actions { margin-top: 6px; }
+    .continue-actions .btn { min-height: 30px; }
+
+    /* Seats two-up (the screen is landscape), each a slim card: the
+       human / CPU pills and the personality give way to name + difficulty */
+    .setup-seats { gap: 6px; }
+    .seat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+    .seat-add { grid-column: 1 / -1; min-height: 28px; }
+    .seat-controls { gap: 4px; }
+    .seat-bulk select, .seat-personality, .seat-name, .setup-subrule select { min-height: 26px; }
+    .seat-row { padding: 4px 4px 4px 6px; gap: 4px; border-left-width: 4px; }
+    .seat-head { gap: 3px; }
+    .seat-token-btn { width: 26px; height: 26px; font-size: 1rem; }
+    .seat-type .segmented-opt > span { min-height: 24px; min-width: 24px; padding: 0 4px; font-size: 0.85rem; }
+    .seat-remove { width: 24px; height: 26px; }   /* 24px: WCAG 2.5.8 target size */
+    .seat-difficulty { grid-template-columns: minmax(0, 1fr); padding-top: 4px; gap: 4px; }
+    .seat-personality { max-width: none; }
+    /* Two-up: each card a 3-row grid so the name gets its line's
+       room (beside the pills it was ~50px, "Alexandra" cut): token · name ·
+       ✕ / human-CPU · personality / difficulty pills (a human card stops
+       after the second). .seat-head and .seat-difficulty dissolve into it
+       (as internal 5-8 seats). One-up cards (the 329px
+       query above) keep the one-line head. */
+    .seat-row {
+        display: grid;
+        grid-template-columns: 26px auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            "token name name remove"
+            "type  type pers pers"
+            "diff  diff diff diff";
+        align-items: center;
+        position: relative; /* anchors the token-grid popover */
+    }
+    .seat-head { display: contents; }
+    .seat-difficulty:not([hidden]) { display: contents; }
+    .seat-token-btn { grid-area: token; }
+    .seat-name { grid-area: name; padding: 0 6px; }
+    .seat-remove { grid-area: remove; }
+    .seat-type { grid-area: type; justify-self: start; }
+    .seat-personality { grid-area: pers; width: 100%; }
+    .seat-diff { grid-area: diff; }
+    .seat-row .token-grid { top: 34px; }
+    .setup-rules-summary { min-height: 30px; padding: 0 8px; }
+    .setup-rules-list { padding: 0 8px 4px; }
+
+    .setup-actions { margin: 6px -6px -8px; padding: 4px 6px; gap: 6px; }
+    .setup-actions .btn { min-height: 32px; }
+    .btn-start { font-size: 1rem; padding-block: 0; }
+    /* One row on the short cover (the seats need the height): Settings,
+       House rules, Start. Opened, the rules take a row of their own above. */
+    html:not(.cover-cams) #tab-setup > .setup-actions { grid-template-columns: auto auto minmax(0, 1fr); align-items: center; }
+    html:not(.cover-cams) .setup-actions > .setup-rules { grid-column: 2; grid-row: 1; box-shadow: none; }
+    html:not(.cover-cams) .setup-actions > .setup-rules[open] { grid-column: 1 / -1; grid-row: auto; }
+    html:not(.cover-cams) .setup-actions > .setup-rules:not([open]) .setup-rules-summary { min-height: 30px; gap: 6px; padding: 0 6px; }
+    html:not(.cover-cams) .setup-actions > .setup-rules .setup-h2 { font-size: 0.72rem; white-space: nowrap; }
+    html:not(.cover-cams) .setup-actions > .setup-rules:not([open]) .setup-rules-state,
+    html:not(.cover-cams) #tab-setup > .setup-actions .btn-start-sub { display: none; }
+
+    /* ==================== Wide cover ==================== */
+
+    /* A short landscape screen at least 2:1 (805x361): the board still fills
+       the height, and the column beside it is wide (>= ~340px), so the
+       buttons and the CPU's thinking pill leave the board centre for the
+       column, under the player cards (ScreenManager.isCoverWide keeps
+       #controls in .game-layout; same query there). The cards go two-up so
+       8 seats still fit above the buttons; the buttons are laid out as on
+       the internal display (info left, actions right, main action full
+       width at the bottom) with their labels. */
+    @media (min-width: 481px) and (min-aspect-ratio: 2/1) {
+        #screen-game .game-layout { grid-template-rows: auto minmax(0, 1fr) auto; }
+        .player-panels {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-content: center;
+            gap: 3px;
+        }
+        .player-panels > :first-child, .player-panels > :last-child { margin: 0; }
+        .player-panels.panels-tight { gap: 0 3px; }
+        /* The cards have room: bigger text, as on the internal display
+           (5+ seats step down a little so 4 rows fit above the buttons) */
+        .player-panel { padding: 5px 8px; border-left-width: 4px; line-height: 1.2; }
+        .panel-name { font-size: 1.15rem; }
+        .panel-cash { font-size: 1.35rem; }
+        .panel-meta { font-size: 0.9rem; }
+        .panels-compact .player-panel { padding: 3px 8px; line-height: 1.15; }
+        .panels-compact .panel-name { font-size: 1.05rem; }
+        .panels-compact .panel-cash { font-size: 1.2rem; }
+        .panels-compact .panel-props { font-size: 0.9rem; }
+
+        #screen-game > .game-layout > .controls {
+            grid-column: 3;
+            grid-row: 3;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            /* dense: the side buttons' `order` (lefts, then rights) would
+               otherwise leave holes beside Properties and Auction */
+            grid-auto-flow: row dense;
+            align-content: end;
+            gap: 4px;
+            padding: 4px 0 2px;
+            /* Two button rows held on a CPU's turn too (the pill is one),
+               so the cards above don't jump when the turn changes */
+            min-height: 86px;
+        }
+        .game-layout > .controls > .btn { min-height: 34px; font-size: 12px; padding: 4px 6px; }
+        .game-layout > .controls > .btn .btn-text {
+            display: inline;
+            overflow: hidden;
+            text-overflow: clip;
+            white-space: nowrap;
+        }
+        .game-layout > .controls > .btn .btn-icon { font-size: 15px; }
+        .game-layout > .controls > .btn-lg { min-height: 42px; font-size: 14px; }
+        .game-layout > .controls > .ctl-left { grid-column: 1; }
+        .game-layout > .controls > .ctl-right { grid-column: 2; }
+        .game-layout > .controls > .ctl-main,
+        .game-layout > .controls > .ctl-wide,
+        .game-layout > .controls > .cpu-thinking { grid-column: 1 / -1; }
+        .game-layout > .controls > .cpu-thinking { font-size: 14px; padding: 2px 8px; }
+        .game-layout > .controls > .cpu-thinking-pill { min-height: 42px; }
+        /* The money note is in the turn line (.turn-debt), as on the internal
+           display, so the red banner doesn't take a button row */
+        .game-layout > .controls > .debt-banner { display: none; }
+
+        /* Modals: a centred card over the dimmed board, not a full-screen
+           sheet. Plain ones (lists, confirmations, settings) fit their
+           content and scroll past the screen height (a deed's or card's
+           cqh text then follows the viewport height, the same size here);
+           the sheets that fill the height (auction, trade builder, log,
+           house manager, held sheets) keep it and the size container. A
+           trade offer fits its cards too. The trade builder keeps nearly
+           the full width for its two columns. */
+        .modal {
+            width: min(600px, calc(100vw - 24px));
+            height: auto;
+            max-height: calc(100dvh - 16px);
+            border-radius: var(--radius-lg);
+            padding: 6px 10px;
+        }
+        #modal-body { container-type: normal; flex: 0 1 auto; }
+        .modal:is(.modal-hold, :has(.trade-builder, .log-modal, .auction-body, .group-manage)) {
+            height: calc(100dvh - 16px);
+        }
+        .modal:is(.modal-hold, :has(.trade-builder, .log-modal, .auction-body, .group-manage)) #modal-body {
+            container: sheet / size;
+            flex: 1 1 auto;
+        }
+        .modal:has(.trade-builder) { width: calc(100vw - 24px); }
+
+        /* Trade offer: fits its cards, but a long one shrinks to the
+           screen and each side scrolls on its own, keeping the value check
+           in view (the body is a flex column, so the grid gets a definite
+           height to share) */
+        .modal:has(.offer-body) #modal-body { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+        .modal:has(.offer-body) .offer-body { height: auto; flex: 0 1 auto; min-height: 0; }
+
+        /* Board centre feed (board.css) in larger type */
+        .announce { font-size: 22px; }
+        .announce > .announce-prev {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            flex: none;
+            margin-bottom: 3px;
+            font-size: 0.68em;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        /* Dice in proportion to the turn line beside them (the narrow
+           cover's big dice fill a centre with nothing else in it) */
+        .dice-area { font-size: calc(var(--board) * 0.075); }
+        /* Turn line: the name big on one line (shrunk to fit rather than
+           wrapped); no "Turn" label, no "on <tile>" */
+        .turn-banner { font-size: 38px; line-height: 1.1; display: block; min-width: 0; }
+        .turn-banner > .turn-sep { display: none; }
+        .turn-banner > .turn-name {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: clip;
+            color: var(--ink, inherit);   /* seat colour (Controls) */
+        }
+        .announce > .announce-prev .log-name { opacity: 0.85; }
+
+        /* Status bar: icons with their labels */
+        #screen-game .status-bar .btn-settings {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 15px;
+        }
+        .btn-settings > .status-label { display: inline; font-size: 12px; font-weight: 600; }
+
+        /* Player cards: a chip per group they hold part of (Panels._setsHTML:
+           filled = owned, 1-4 / H = buildings, colour hatched grey = mortgaged),
+           wrapping only when one line can't hold them, then 🔑 */
+        .player-panel > .panel-sets {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2px 4px;
+            margin-top: 2px;
+            min-height: 9px;
+        }
+        .set-chip { display: inline-flex; flex: 0 0 auto; gap: 1px; }
+        .set-chip > i {
+            width: 8px;
+            height: 9px;
+            border-radius: 1px;
+            box-shadow: inset 0 0 0 1px var(--chip);
+            opacity: 0.55;
+        }
+        .set-chip > i.on { background: var(--chip); opacity: 1; }
+        /* Whole set held, nothing mortgaged: a ring (padding keeps it clear of the squares) */
+        .set-chip.set-full { padding: 1px; border-radius: 2px; box-shadow: 0 0 0 1.5px var(--text); }
+        /* Mortgaged: as on the board, the full group colour under a see-through grey diagonal hatching */
+        .set-chip > i.mortgaged {
+            background: repeating-linear-gradient(45deg, transparent 0 2.5px, rgba(128, 128, 128, 0.6) 2.5px 4px), var(--chip);
+            box-shadow: inset 0 0 0 1px var(--chip);
+        }
+        /* Buildings on a held deed: house count or H, legible on any colour */
+        .set-chip > i[data-b] { display: inline-flex; align-items: center; justify-content: center; }
+        .set-chip > i[data-b]::after {
+            content: attr(data-b);
+            font: 800 8px/1 var(--font-mono);
+            font-style: normal;
+            color: #fff;
+            text-shadow: 0 0 1px #000, 0 0 2px #000;
+        }
+        .panel-flag { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); line-height: 1; }
+        /* Up to 4 seats: name, cash, then the chips (bigger squares) with
+           any 🔑; the chips say what the old "5 props" line did, so it goes */
+        .player-panels:not(.panels-compact) .panel-meta { display: none; }
+        .player-panels:not(.panels-compact) .panel-name { font-size: 1.3rem; }
+        .player-panels:not(.panels-compact) .panel-cash { font-size: 1.55rem; }
+        .player-panels:not(.panels-compact) .player-panel > .panel-sets { min-height: 13px; margin-top: 3px; }
+        .player-panels:not(.panels-compact) .set-chip > i { width: 10px; height: 13px; }
+        .player-panels:not(.panels-compact) .set-chip > i[data-b]::after { font-size: 9.5px; }
+
+        /* Property list: colour groups flow down two columns (not one row
+           per group), each row with what landing on it costs now */
+        .portfolio { display: block; columns: 2; column-gap: 6px; }
+        .portfolio > .trade-group-label { break-after: avoid; margin: 0 0 2px; padding-top: 2px; }
+        .portfolio > .portfolio-row { width: 100%; margin-bottom: 2px; break-inside: avoid; }
+        .portfolio > .modal-cash, .portfolio > p { column-span: all; }
+        .portfolio-row > .portfolio-rent {
+            display: inline;
+            margin-left: auto;
+            padding-left: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            color: var(--money);
+        }
+    }
+
+    /* ==================== Cover cameras ==================== */
+
+    /* Razr Ultra 2025 cover at its full height (Chrome 361x407): the
+       cameras cover the bottom-right corner. ScreenManager.applyCoverCams
+       sets html.cover-cams (Auto: viewport taller than wide; Settings >
+       Cover cameras) and --cam-top / --cam-left, the keep-out's top and
+       left edges in px. Usable: the band above --cam-top (full width) and
+       the pocket left of --cam-left below it. Every resize re-checks, so
+       flipping between the cover's sizes re-lays out live.
+       Game: a wide board fills the band (the 11x11 grid simply becomes a
+       rectangle), the status icons and the player cards share the pocket. */
+    html.cover-cams #screen-game .game-layout {
+        grid-template-columns: var(--cam-left) minmax(0, 1fr);
+        grid-template-rows: calc(var(--cam-top) - 6px) auto minmax(0, 1fr);
+        row-gap: 3px;
+    }
+    html.cover-cams #screen-game .board-ring {
+        --board: min(calc(100vw - 4px), calc(var(--cam-top) - 6px));
+        grid-column: 1 / -1;
+        grid-row: 1;
+        width: calc(100vw - 4px);
+        height: calc(var(--cam-top) - 6px);
+        aspect-ratio: auto;
+    }
+    html.cover-cams .cover-split { display: none; }
+    html.cover-cams #screen-game .status-bar {
+        grid-column: 1;
+        grid-row: 2;
+        flex-wrap: nowrap;
+        padding: 0;
+    }
+    html.cover-cams #screen-game .status-bar .btn-settings { min-height: 24px; }
+
+    /* Player cards: two-up. Up to 4 seats: name over full cash; 5-8
+       (panels-compact): token + cash on one line, 4 rows */
+    html.cover-cams .player-panels {
+        grid-column: 1;
+        grid-row: 3;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-content: start;
+        gap: 2px 3px;
+    }
+    html.cover-cams .player-panels > :first-child,
+    html.cover-cams .player-panels > :last-child { margin: 0; }
+    html.cover-cams .player-panels.panels-tight { gap: 0 3px; }
+    html.cover-cams .player-panel { padding: 1px 4px; line-height: 1.15; min-width: 0; }
+    html.cover-cams .panel-meta,
+    html.cover-cams .panel-props { display: none; }
+    html.cover-cams .panel-name { font-size: 0.95rem; }
+    html.cover-cams .panel-cash { font-size: 1.05rem; overflow: hidden; }
+    html.cover-cams .panels-compact .panel-top {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: baseline;
+        gap: 3px;
+    }
+    html.cover-cams .panels-compact .panel-name { flex: 0 0 auto; font-size: 0.95rem; }
+    html.cover-cams .panels-compact .panel-name-text,
+    html.cover-cams .panels-compact .cash-delta { display: none; }
+    html.cover-cams .panels-compact .panel-cash { flex: 1 1 auto; min-width: 0; font-size: 1rem; }
+
+    /* Sheets: still full screen, but the footer fills the pocket (its
+       buttons wrap there, the decisive one last as before), so the body
+       ends at the cameras' top edge and nothing tappable sits under them. */
+    html.cover-cams .modal-buttons,
+    html.cover-cams .modal-buttons:not(:has(.modal-btn-break)) {
+        box-sizing: border-box;
+        align-self: flex-start;
+        width: calc(var(--cam-left) - 6px);
+        min-height: calc(100dvh - var(--cam-top) - 4px);
+        flex-wrap: wrap;
+        align-content: flex-end;
+    }
+    html.cover-cams .modal-buttons:not(:has(.modal-btn-break)) > .btn { flex: 1 1 40%; }
+    html.cover-cams .modal-buttons:not(:has(.modal-btn-break)) > .btn-main { flex-basis: 100%; }
+    html.cover-cams .modal-buttons .btn { min-height: 32px; padding-inline: 4px; }
+    /* The pocket is narrow but tall: a top action (the deed's Manage
+       houses / Mortgage) takes its own row above Close, as on internal */
+    html.cover-cams .modal-buttons:not(:has(.modal-btn-break)) > .btn-top { flex: 1 1 100%; }
+    html.cover-cams .modal-buttons:not(:has(.modal-btn-break)) > .btn-top.btn-half { flex: 1 1 calc(50% - 3px); }
+    /* Three or more buttons: the side ones with an icon (Owners,
+       Properties, Trade…) go icon-only so they share a row; the label
+       stays as the accessible name (font-size 0, not removed). Text-only
+       dismissals (Cancel, Close) and the decisive action keep their words. */
+    html.cover-cams .modal-buttons:has(> .btn:nth-of-type(3)) > .btn:not(.btn-main):not(.btn-grow):has(> svg.icon) {
+        flex: 1 0 34px;
+        font-size: 0;
+        padding-inline: 4px;
+    }
+    html.cover-cams .modal-buttons:has(> .btn:nth-of-type(3)) > .btn:not(.btn-main):not(.btn-grow) > svg.icon {
+        width: 18px;
+        height: 18px;
+    }
+    /* Five or more (Game Over): the side buttons in two even rows of two
+       over the decisive action, not three and a lone one */
+    html.cover-cams #modal-buttons:not(:has(.modal-btn-break)):has(> .btn:nth-of-type(5)) > .btn:not(.btn-main):not(.btn-grow) {
+        flex: 1 1 calc(50% - 3px);
+    }
+    /* Footers in rows (auction): the bid buttons share the first row in a
+       smaller face, the decisive action grows beside the icons */
+    /* (a 3-digit bid wraps "Bid" over the amount instead of spilling) */
+    html.cover-cams .modal-buttons > .btn-grow { font-size: 0.85rem; padding-inline: 2px; min-height: 36px; white-space: normal; line-height: 1.05; }
+    html.cover-cams .modal-buttons:has(.modal-btn-break) > .btn-main { flex: 3 1 auto; }
+
+    /* Home: the Settings + Start bar sits in the pocket, as tall as it, so
+       the scrolled content always ends above the cameras; History, Stats
+       and the Lab get the same room at their end */
+    /* The bar runs the full width, so the seat list never scrolls into
+       the camera corner; its buttons keep to the pocket (padding-right) */
+    html.cover-cams #tab-setup > .setup-actions {
+        box-sizing: border-box;
+        min-height: calc(100dvh - var(--cam-top));
+        padding-right: calc(100vw - var(--cam-left));
+        align-content: end;
+    }
+    html.cover-cams .btn-start-sub { display: none; }
+    html.cover-cams #screen-setup > .setup-tab-panel:not(#tab-setup) {
+        padding-bottom: calc(100dvh - var(--cam-top));
+    }
+
+}

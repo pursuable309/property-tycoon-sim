@@ -1,0 +1,404 @@
+/* Home screen (setup.js): brand header + section subtabs, Continue card, seats, house
+   rules and the pinned Settings / Start bar. Cover-display overrides live in
+   responsive/motorola-external.css ("Home screen"). */
+
+/* ==================== Shell: header + tabs ==================== */
+
+#screen-setup { max-width: none; padding: 0; }
+/* The New Game tab fills the screen below the header, so the settings +
+   Start Game bar sits at the bottom even with few seats (sticky when the
+   list is longer than the screen). [hidden] still wins (reset.css). */
+#screen-setup { display: flex; flex-direction: column; min-height: 100dvh; }
+/* Every tab panel stays screen-wide (a flex item would otherwise size to
+   its widest content, e.g. the Lab's view pills, and scroll sideways) */
+#screen-setup > .setup-tab-panel { width: 100%; min-width: 0; }
+#tab-setup { flex: 1 0 auto; display: flex; flex-direction: column; }
+#tab-setup > .setup-actions { margin-top: auto; }
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--brand);
+    color: var(--brand-ink);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.app-header-inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 10px;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 10px 12px 8px;
+}
+
+.app-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.app-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+/* Home sections bar: shared subtabs (components/subtabs.css) under the
+   logo and title */
+.home-subtabs {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 8px;
+}
+@media (max-width: 480px), (max-height: 499px) {
+    .home-subtabs { justify-self: stretch; margin-top: 6px; }
+    .app-header-inner { padding-top: 8px; padding-bottom: 6px; }
+}
+
+/* Lab tab badges (lab-ui.js refreshBadge): orange = levers waiting for the
+   user, green = levers the pipeline is working on, ink = games queued for
+   Claude review. */
+.tab-badge {
+    display: inline-block;
+    min-width: 1.45em;
+    margin-left: 4px;
+    padding: 0 0.35em;
+    border-radius: var(--radius-pill);
+    font-size: 0.72em;
+    font-weight: 800;
+    line-height: 1.45;
+    text-align: center;
+    vertical-align: 0.12em;
+}
+.tab-badge-waiting { background: var(--badge-warn); color: #fff; }
+.tab-badge-running { background: var(--accent); color: var(--accent-contrast); }
+.tab-badge-reviews { background: var(--brand-ink); color: var(--brand); }
+.tab-badge + .tab-badge { margin-left: 2px; }
+
+.setup-tab-panel {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 12px 12px 16px;
+}
+
+/* Shared out-of-game type */
+.eyebrow {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.setup-h2 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.setup-count { margin-left: 4px; color: var(--text-muted); font-size: 0.85em; }
+
+/* ==================== Continue card ==================== */
+
+.continue-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    /* a real border, not an inset shadow: dark's --shadow-card is `none`,
+       which would void a shadow list */
+    border: 2px solid var(--accent);
+    box-shadow: var(--shadow-card);
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.continue-top { display: flex; gap: 8px; justify-content: space-between; align-items: flex-start; }
+.continue-info { min-width: 0; }
+.continue-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 2px 0;
+    font-variant-numeric: tabular-nums;
+}
+.continue-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+.continue-tokens { display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: 45%; padding-left: 6px; }
+.continue-token {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    margin: 0 0 4px -6px;
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow: 0 0 0 2px var(--c);
+    font-size: 0.9rem;
+}
+.continue-token.is-out { opacity: 0.35; }
+
+.continue-actions {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* ==================== Players ==================== */
+
+.setup-seats { display: flex; flex-direction: column; gap: 10px; }
+
+.seat-controls { display: flex; flex-direction: column; gap: 8px; }
+
+.seat-controls-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.seat-bulk {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 6px;
+}
+
+.seat-bulk-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.seat-personality,
+.seat-bulk select,
+.setup-subrule select {
+    min-height: 36px;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    padding: 0 6px;
+}
+
+/* The All CPUs pickers: a size under the seat pickers, so "Difficulty" and
+   "Personality" fit side by side in the wide-font styles (Contrast, Newsprint) */
+.seat-bulk select { font-size: 0.88em; padding: 0 4px; }
+
+.seat-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
+
+/* Two columns of seats once there's room */
+@media (min-width: 560px) {
+    .seat-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .seat-add { grid-column: 1 / -1; }
+}
+
+.seat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 10px 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    border-left: 5px solid var(--seat-accent, var(--border));
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+/* Token · name · human/CPU · ✕ on one line */
+.seat-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 6px;
+    position: relative; /* anchors the token-grid popover */
+}
+
+.seat-token-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 1.3rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    cursor: pointer;
+    /* ties the token to its in-game colour even if the emoji font is missing */
+    box-shadow: inset 0 -3px 0 var(--seat-accent, transparent);
+}
+
+.seat-name {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    padding: 0 8px;
+    font-weight: 700;
+    /* A 9-letter name shrinks to fit the field (FitText; refits as you type) */
+    text-overflow: clip;
+    --fit-min: 0.45;
+}
+
+.seat-type .segmented-opt > span { min-height: 32px; padding: 0 9px; font-size: 1rem; }
+
+.seat-remove {
+    width: 30px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+.seat-remove:disabled { opacity: 0.3; cursor: default; }
+
+/* CPU line: difficulty pills + personality, divided like a ticket stub */
+.seat-difficulty {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1.5px dashed var(--border);
+}
+.seat-difficulty[hidden] { display: none; }
+.seat-diff { width: 100%; }
+.seat-diff .segmented-opt > span { padding: 0; }
+.seat-diff.is-locked { opacity: 0.6; }
+.seat-personality { max-width: 9.5rem; }
+
+.seat-add {
+    min-height: 44px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: none;
+    color: var(--text-muted);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Token swatch-grid popover */
+.token-grid {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    max-width: min(280px, 90vw);
+}
+
+.token-cell {
+    font-size: 1.3rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    cursor: pointer;
+}
+
+.token-cell.is-current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.token-cell.is-taken { opacity: 0.35; }
+.token-cell:active { background: var(--border); }
+
+/* ==================== House rules ==================== */
+
+.setup-rules {
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.setup-rules-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    cursor: pointer;
+    list-style: none;
+}
+.setup-rules-summary::-webkit-details-marker { display: none; }
+.setup-rules-summary::after {
+    content: '›';
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text-muted);
+    transition: transform 0.15s;
+}
+.setup-rules[open] .setup-rules-summary::after { transform: rotate(90deg); }
+.setup-rules-state { margin-left: auto; font-size: 0.8rem; color: var(--text-muted); }
+
+.setup-rules-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px 8px;
+    border-top: 1.5px dashed var(--border);
+}
+
+/* Pinned in the bottom bar: full width above the buttons; open, the list
+   scrolls inside the bar instead of pushing the buttons off screen */
+.setup-actions > .setup-rules { grid-column: 1 / -1; }
+.setup-actions > .setup-rules[open] .setup-rules-list { max-height: 45dvh; overflow-y: auto; }
+
+.setup-rule { cursor: pointer; padding: 6px 0; }
+/* A short list box (max-height, scrolling) must not squash its rows */
+.setup-rules-list > * { flex-shrink: 0; }
+.setup-rule-text { display: flex; flex-direction: column; gap: 1px; font-size: 0.9rem; }
+.setup-rule-text small { color: var(--text-muted); font-size: 0.78rem; line-height: 1.3; }
+.setup-subrule { padding-left: 12px; font-size: 0.85rem; }
+
+/* ==================== Pinned Settings / Start bar ==================== */
+
+.setup-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px;
+    margin: 12px -12px -16px;
+    flex-shrink: 0;
+    padding: 10px 12px 12px;
+    background: var(--bg);
+    box-shadow: 0 -6px 12px -8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-start { white-space: nowrap; min-height: 48px; }
+.btn-start-sub { font-weight: 500; font-size: 0.85em; opacity: 0.85; }
+@media (max-width: 480px) and (min-height: 500px) {
+    .btn-start-sub { display: none; }
+}
+
+/* ==================== Settings sheet ==================== */
+
+/* Settings tabs share one cell, so the sheet is always as tall as the
+   tallest tab and doesn't jump when switching; inactive tabs are invisible
+   (and inert, so out of the tab order) rather than removed from layout. */
+/* minmax(0, 1fr): a wide pill row must not widen the sheet past its body */
+.settings-panels { display: grid; grid-template-columns: minmax(0, 1fr); }
+.settings-panels > .settings-panel { grid-area: 1 / 1; }
+.settings-panels > .settings-panel.is-inactive { visibility: hidden; }

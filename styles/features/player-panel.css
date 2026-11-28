@@ -1,0 +1,55 @@
+.player-panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.player-panel {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.panel-current { outline: 2px solid var(--accent); }
+.panel-bankrupt { opacity: 0.45; filter: grayscale(1); }
+/* In jail: faint bars over the card, name, token and cash dimmed (no label) */
+.panel-jailed {
+    background-image: repeating-linear-gradient(90deg,
+        transparent 0 13px,
+        color-mix(in srgb, var(--text) 13%, transparent) 13px 16px);
+}
+.panel-jailed .panel-name,
+.panel-jailed .panel-cash { opacity: 0.55; }
+
+/* --fit-min: a 9-letter name of wide letters shrinks further (FitText) */
+.panel-name { font-weight: 700; overflow: hidden; text-overflow: clip; white-space: nowrap; --fit-min: 0.45; }
+.panel-cash { font-size: 1.15rem; font-weight: 700; font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.panel-meta { color: var(--text-muted); font-size: 0.78rem; }
+/* Property-count chip: only the cover display shows it, where 5+ seats
+   drop the meta line (motorola-external.css). */
+.panel-props { display: none; }
+
+/* Cash change feedback */
+.cash-up { animation: cash-flash-up 0.9s ease-out; }
+.cash-down { animation: cash-flash-down 0.9s ease-out; }
+
+@keyframes cash-flash-up { 0%, 50% { color: var(--success); } }
+@keyframes cash-flash-down { 0%, 50% { color: var(--danger); } }
+
+.cash-delta {
+    font-size: 0.72em;
+    font-weight: 600;
+    margin-left: var(--spacing-xs);
+    animation: delta-fade 1.8s ease-out forwards;
+}
+
+.delta-up { color: var(--success); }
+.delta-down { color: var(--danger); }
+
+@keyframes delta-fade {
+    0%, 65% { opacity: 1; }
+    100% { opacity: 0; }
+}

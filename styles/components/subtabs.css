@@ -1,0 +1,112 @@
+/* Shared subtabs (projects/.shared/README.md "Subtabs"; scripts/ui/subtabs.js):
+   one section of a screen at a time, from an icon + one-word-label bar. This
+   app does not load the shared ui.css, so these are its .ui-subtabs / .ui-view
+   rules in this app's tokens, same layout: a track with the chosen button
+   raised, as wide as its buttons on full, icon over label on internal and
+   cover. Bars: home sections (index.html), Stats and Lab sections, Settings.
+   Markup: Icons.subtabs(). The chosen button: --seg-on-bg / --seg-on-text
+   (default: this app's green pill). Labels are clipped, never "…". */
+
+.ui-seg.ui-subtabs {
+    display: flex;
+    gap: 2px;
+    min-width: 0;
+    padding: 3px;
+    border-radius: calc(var(--radius-md) + 3px);
+    background: var(--surface-alt);
+}
+
+.ui-subtabs > button {
+    position: relative;
+    flex: 1 1 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    min-height: 34px;
+    margin: 0;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+.ui-subtabs > button[hidden] { display: none; }
+.ui-subtabs > button > .icon { width: 16px; height: 16px; }
+.ui-subtabs > button > span:not(.tab-badges) { min-width: 0; overflow: hidden; text-overflow: clip; }
+.ui-subtabs > button:active { background: var(--border); }
+.ui-subtabs > button.active {
+    background: var(--seg-on-bg, var(--accent));
+    color: var(--seg-on-text, var(--accent-contrast));
+    box-shadow: var(--shadow-sm);
+}
+.ui-subtabs > button:focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 1px; }
+
+.ui-view.flat { display: block; }
+.ui-view[hidden] { display: none !important; }
+
+/* Lab badges (lab-ui.js _setBadge): beside the label on full */
+.ui-subtabs .tab-badges { display: inline-flex; gap: 2px; }
+.ui-subtabs .tab-badges .tab-badge { margin-left: 0; vertical-align: 0; }
+
+/* Home bar on the brand header */
+.app-header .ui-subtabs {
+    --seg-on-bg: var(--brand-ink);
+    --seg-on-text: var(--brand);
+    background: color-mix(in srgb, var(--brand-ink) 10%, transparent);
+}
+/* unchosen labels: brand-ink mixed toward the brand, not --brand-ink-muted
+   (4.1:1 on the track at 10-11px; this clears 4.5:1 in every style) */
+.app-header .ui-subtabs > button { color: color-mix(in srgb, var(--brand-ink) 84%, var(--brand)); }
+.app-header .ui-subtabs > button.active { color: var(--brand); }
+.app-header .ui-subtabs > button:active { background: color-mix(in srgb, var(--brand-ink) 16%, transparent); }
+
+/* full: each bar as wide as its buttons */
+@media (min-width: 481px) and (min-height: 500px) {
+    .ui-seg.ui-subtabs { display: inline-flex; max-width: 100%; }
+    .ui-subtabs > button { flex: none; padding: 0 14px; }
+}
+
+/* internal and cover: icon over label, badges in the corner */
+@media (max-width: 480px), (max-height: 499px) {
+    .ui-subtabs > button {
+        flex-direction: column;
+        gap: 1px;
+        min-height: 42px;
+        padding: 4px 2px 3px;
+        font-size: 11px;
+        line-height: 1.1;
+    }
+    .ui-subtabs > button > .icon { width: 17px; height: 17px; }
+    .ui-subtabs > button > span:not(.tab-badges) { max-width: 100%; }
+    /* one badge beside the icon; two stack in the top-right corner */
+    .ui-subtabs .tab-badges { position: absolute; top: 2px; left: calc(50% + 6px); }
+    .ui-subtabs .tab-badges:has(> .tab-badge + .tab-badge) { left: auto; right: 2px; flex-direction: column; gap: 1px; }
+    .ui-subtabs > button:has(> .tab-badges > .tab-badge + .tab-badge) { padding-right: 18px; }
+    .ui-subtabs .tab-badges .tab-badge { font-size: 9.5px; line-height: 15px; min-width: 15px; }
+}
+/* internal: a slimmer home bar, so the header costs the seat list little */
+@media (max-width: 480px) and (min-height: 500px) {
+    .app-header .ui-subtabs { padding: 2px; }
+    .app-header .ui-subtabs > button { min-height: 36px; padding: 2px 2px 1px; }
+    .app-header .ui-subtabs > button > .icon { width: 15px; height: 15px; }
+}
+@media (max-height: 499px) {
+    .ui-subtabs > button { min-height: 34px; padding: 2px 1px; font-size: 10px; }
+    .ui-subtabs > button > .icon { width: 14px; height: 14px; }
+    .ui-subtabs .tab-badges { top: 1px; }
+    .ui-subtabs .tab-badges .tab-badge { font-size: 8px; line-height: 12px; min-width: 12px; }
+}
+
+/* The review badge is brand-ink: invert it on the chosen (brand-ink) home button */
+.app-header .ui-subtabs > button.active .tab-badge-reviews { background: var(--brand); color: var(--brand-ink); }
+/* A green (accent) badge on the chosen Lab subtab (accent too): invert it */
+.lab-views .ui-subtabs > button.active .tab-badge-running { background: var(--accent-contrast); color: var(--accent); }

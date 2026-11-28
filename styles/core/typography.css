@@ -1,0 +1,29 @@
+/* Display face for titles and deeds: Roboto Slab (Apache-2.0, variable
+   weight, latin subset), bundled so the game stays offline.
+   Licence: assets/fonts/LICENSE-roboto-slab.txt */
+@font-face {
+    font-family: 'Roboto Slab';
+    font-style: normal;
+    font-weight: 400 900;
+    font-display: swap;
+    src: url('../../assets/fonts/roboto-slab-latin.woff2') format('woff2');
+}
+
+:root {
+    --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Roboto Slab', Rockwell, Georgia, serif;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+h1 { font-size: 1.8rem; margin: 0 0 var(--spacing-sm); }
+h2 { font-size: 1.3rem; margin: 0 0 var(--spacing-sm); }
+h3 { font-size: 1.05rem; margin: 0 0 var(--spacing-xs); }
+
+h1, h2, .app-title, .deed-band, .continue-title { font-family: var(--font-display); }
+
+.subtitle { color: var(--text-muted); margin: 0; }
