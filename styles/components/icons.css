@@ -1,0 +1,14 @@
+/* Inline line icons (scripts/ui/icons.js): sized by the font, coloured by the text */
+.icon {
+    display: inline-block;
+    width: 1.15em;
+    height: 1.15em;
+    flex: 0 0 auto;
+    vertical-align: -0.2em;
+}
+
+.btn-icon { display: inline-flex; align-items: center; }
+
+/* Status bar + the ⚙ beside Start Game */
+.btn-settings .icon { width: 1.2em; height: 1.2em; }
+.btn-square .icon { width: 1.1em; height: 1.1em; }

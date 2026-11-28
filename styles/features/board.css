@@ -1,0 +1,207 @@
+/* Ring mode (default): 11x11 CSS grid, square board */
+.board-ring {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(11, 1fr);
+    gap: 1px;
+    background: var(--board-bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Board centre: the same three rows on every layout, sized by the centre
+   itself (a size container, so cq units follow the board, not the screen):
+   dice with the turn line beside them, this turn's event feed in the room
+   left over, then the turn buttons (ScreenManager.controlsInCentre). The
+   responsive files only tune sizes for their screens. */
+.board-center {
+    grid-row: 2 / 11;
+    grid-column: 2 / 11;
+    container: board-center / size;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 4px;
+    min-height: 0;
+    min-width: 0;
+}
+/* :where() keeps these at one class, so a responsive file's own sizes win */
+:where(.board-center) > .dice-area { grid-area: 1 / 1; font-size: clamp(20px, 13cqmin, 60px); gap: 4px; }
+:where(.board-center) > .turn-banner { grid-area: 1 / 2; min-width: 0; }
+:where(.board-center) > .announce { grid-area: 2 / 1 / 3 / -1; }
+
+/* Debt / can't afford: the amount and the shortfall under the turn line
+   (Controls._shortLine), on every layout, so the feed keeps its place and
+   no red banner covers it (the cover stacks the two halves) */
+.turn-debt { display: none; }
+:where(.board-center) .turn-debt {   /* one class: a responsive file's size wins */
+    display: block;
+    margin-top: 2px;
+    color: var(--neg);   /* --danger is a fill colour: 3.4:1 on the board */
+    font-size: 0.55em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+.board-center > .controls > .debt-banner { display: none; }
+
+/* Turn line: a small "Turn" label, the name big in its seat colour (cut
+   with … rather than wrapped), then where they stand. Short centres keep
+   just the name (responsive files). */
+.turn-banner {
+    font-weight: 700;
+    text-align: right;
+    font-size: clamp(14px, 8cqmin, 30px);
+    line-height: 1.1;
+}
+.turn-banner > .turn-prefix {
+    display: block;
+    font-size: 0.45em;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.turn-banner > .turn-sep { display: none; }
+.turn-banner > .turn-name {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    --fit-min: 0.45;   /* a 9-letter name of wide letters (FitText) */
+    color: var(--ink, inherit);
+}
+.turn-banner > .turn-where {
+    display: block;
+    font-size: 0.5em;
+    font-weight: 400;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+/* Event feed (LogUI._announce): the previous turn's headlines faded above
+   a thin divider, then this turn's, the latest in full at the bottom; the
+   oldest leave at the top, whole, when they don't fit. The card always
+   fills the room between the dice and the buttons, so only its text moves
+   (up a line per event), never its edges. A new line never moves or fades,
+   it only gets a brief tint (.announce-new). */
+.announce {
+    align-self: stretch;
+    width: 100%;
+    max-height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    text-align: left;
+    font-size: clamp(12px, 7cqmin, 22px);
+    font-weight: 600;
+    line-height: 1.25;
+    padding: 4px 8px;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+}
+.announce:empty { visibility: hidden; }
+/* Swipe down / up on it pages through earlier headlines (LogUI._bindFeedSwipe) */
+.announce { touch-action: none; cursor: ns-resize; }
+.announce.announce-browsing { box-shadow: var(--shadow), inset 0 -3px 0 var(--accent, var(--border)); }
+.announce > span {
+    flex: none;
+    min-height: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    border-radius: 4px;
+}
+/* Alone, the latest gives way at its bottom (shown from its start) */
+.announce > span:only-child { flex: 0 1 auto; }
+.announce > .announce-prev {
+    -webkit-line-clamp: 2;
+    margin-bottom: 2px;
+    font-size: 0.72em;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+.announce > .announce-prev .log-name { opacity: 0.85; }
+/* Older lines fade by age: LogUI._announce sets each line's opacity */
+.announce > .announce-turn {
+    flex: none;
+    width: 100%;
+    margin: 1px 0 3px;
+    border: 0;
+    border-top: 1px dashed var(--border);
+}
+.announce .log-name { font-weight: 700; }
+.announce > .announce-new { animation: announce-tint 0.7s ease-out both; }
+@keyframes announce-tint {
+    from { background-color: color-mix(in srgb, var(--accent, var(--primary)) 22%, transparent); }
+    to { background-color: transparent; }
+}
+
+/* Turn buttons in the centre: the info buttons (Properties, Deed) left,
+   the actions (Trade, Auction, Pay) right, all on one row; the turn's main
+   action full width below. A CPU's turn puts its thinking note where the
+   main action was. Labels under the icons while the centre is wide enough
+   for them, icons alone on narrow centres, icon beside label on big ones. */
+.board-center > .controls {
+    grid-area: 3 / 1 / 4 / -1;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    align-content: flex-end;
+    gap: 4px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+/* Side buttons share the row in equal widths; a label too long for its
+   share shrinks to fit (FitText) */
+.board-center > .controls > .btn { flex: 1 1 0; min-width: 0; }
+.board-center > .controls > .ctl-left { order: 1; }
+.board-center > .controls > .ctl-right { order: 2; }
+.board-center > .controls > .ctl-main,
+.board-center > .controls > .cpu-thinking,
+.board-center > .controls > .debt-banner { order: 3; flex: 1 0 100%; }
+.board-center > .controls > .ctl-left,
+.board-center > .controls > .ctl-right {
+    flex-direction: column;
+    gap: 1px;
+    padding: 4px 2px 3px;
+    font-size: clamp(10px, 4.4cqw, 14px);
+    line-height: 1.15;
+}
+.board-center > .controls .btn-text { overflow: hidden; text-overflow: clip; white-space: nowrap; max-width: 100%; }
+.board-center > .controls > .ctl-main { font-size: clamp(12px, 6cqmin, 20px); padding: 6px 8px; }
+.board-center > .controls > .cpu-thinking-pill,
+.board-center > .centre-note > .cpu-thinking-pill { min-height: 0; padding-block: 6px; font-size: clamp(12px, 5.5cqmin, 18px); }
+/* The thinking pill's own slot in the centre (internal, Buttons: Bottom):
+   the row the centred buttons take; empty (no height) otherwise */
+.board-center > .centre-note { grid-area: 3 / 1 / 4 / -1; display: flex; flex-direction: column; justify-content: flex-end; }
+.board-center > .centre-note:empty { display: none; }
+.board-center > .centre-note > .cpu-thinking { width: 100%; }
+/* Short centres: just the name in the turn line */
+@container board-center (max-height: 160px) {
+    .turn-banner > .turn-prefix,
+    .turn-banner > .turn-where { display: none; }
+}
+@container board-center (max-width: 215px) {
+    .board-center > .controls > .ctl-left .btn-text,
+    .board-center > .controls > .ctl-right .btn-text { display: none; }
+}
+@container board-center (min-width: 360px) {
+    .board-center > .controls > .ctl-left,
+    .board-center > .controls > .ctl-right { flex-direction: row; gap: 6px; padding: 8px 6px; }
+}

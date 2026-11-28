@@ -1,0 +1,442 @@
+/* History tab (game archive) and the shared review / tuning pieces.
+   The setup-screen tabs themselves are in setup.css. */
+
+/* ==================== History tab ==================== */
+
+#history-root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Infinite-scroll card list: day headers + cards, a page at a time. */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-filters { display: flex; }
+
+/* "Today" / "Yesterday" / "Nov 5" */
+.history-day {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+/* Invisible trigger at the list foot; its approach loads the next page. */
+.history-sentinel {
+    height: 1px;
+}
+
+/* Read-only archive browser opened from in-game Settings */
+.history-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.history-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+}
+
+.history-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: var(--spacing-xl);
+}
+
+/* The shared out-of-game card (History, Stats, Lab): white on the cream
+   page, a hairline edge and a soft shadow. */
+.pt-card,
+.history-card {
+    background: var(--surface);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--text);
+}
+
+/* History cards are buttons: the whole card opens the detail */
+.history-card-tap {
+    width: 100%;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+}
+.history-card-tap:active { background: var(--surface-alt); }
+.history-card-tap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.history-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+.history-card-tap .history-card-head { justify-content: flex-start; }
+.history-card-tap .history-card-head .pt-chip { margin-left: auto; }
+
+.history-date { font-weight: 800; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.history-turns { color: var(--text-muted); font-size: 0.85rem; }
+
+/* Player chips: colour dot + name (+ difficulty), dashed off from the head */
+.history-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-top: 6px;
+    border-top: 1.5px dashed var(--border);
+}
+
+.pt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-alt);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.pt-chip-dot::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c, var(--border));
+}
+.pt-chip-dot { padding-left: 6px; }
+.pt-chip-name { overflow: hidden; text-overflow: clip; }
+.pt-chip.is-human .pt-chip-name { font-weight: 800; }
+.pt-chip-sub { color: var(--text-muted); }
+.pt-chip.chip-win { background: var(--chip-win-bg); color: var(--chip-win-ink); font-weight: 800; }
+.pt-chip.chip-cpu-win { font-weight: 700; }
+/* the saved game in progress */
+.history-card.is-live { border: 2px solid var(--accent); }
+
+.pt-chip.chip-live { background: var(--chip-live-bg); color: var(--chip-live-ink); font-weight: 800; }
+
+.history-icons { display: flex; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
+
+.history-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
+}
+
+.history-card-actions .btn { flex: 1 1 auto; }
+
+/* ==================== Detail modal ==================== */
+
+.history-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    max-height: 60vh;
+    overflow-y: auto;
+    /* The winner marker sits at the chart's right edge (left: 100%) and its
+       hit area would otherwise make the whole view scroll sideways */
+    overflow-x: hidden;
+}
+
+.history-section-title {
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+}
+
+.history-standings { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+
+.history-standing {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.history-standing .standing-name { font-weight: 600; }
+.history-standing .standing-sub { color: var(--text-muted); font-size: 0.8rem; }
+.history-standing .standing-worth { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* The CPU tag gives way first ("CPU d3/build…") so a row stays one line */
+.history-standing .standing-sub { min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap; }
+
+/* ==================== Net-worth chart ==================== */
+
+/* flex-shrink:0 keeps the chart from being collapsed to 0 height by the
+   scrolling flex-column parent (.history-detail max-height:60vh) */
+.nw-chart-container { display: flex; flex-direction: column; gap: var(--spacing-xs); flex-shrink: 0; }
+
+/* Marker toggle: label left, shared toggle switch right */
+.nw-events-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.nw-hide-events .nw-marker,
+.nw-hide-events .nw-tip { display: none; }
+
+.nw-plot {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm, 4px);
+    overflow: visible;
+}
+
+.nw-svg { width: 100%; height: 100%; display: block; }
+
+/* Vertical event markers: a thin full-height line with a coloured cap and a
+   generous invisible hit area for touch. */
+.nw-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 16px;
+    margin-left: -8px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    z-index: 2;
+}
+.nw-marker::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    transform: translateX(-50%);
+    background: var(--nw-marker-color, var(--text-muted));
+    opacity: 0.45;
+}
+.nw-marker::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    background: var(--nw-marker-color, var(--text-muted));
+    border: 1px solid var(--surface);
+}
+.nw-marker.is-active::before { opacity: 0.9; width: 2px; }
+.nw-marker.is-active::after { box-shadow: 0 0 0 2px color-mix(in srgb, var(--nw-marker-color) 40%, transparent); }
+
+.nw-marker-bust    { --nw-marker-color: var(--danger); }
+.nw-marker-win     { --nw-marker-color: #E0A526; }
+.nw-marker-trade   { --nw-marker-color: var(--accent, #0072BB); }
+.nw-marker-lead    { --nw-marker-color: var(--success); }
+.nw-marker-parking { --nw-marker-color: #00838F; }
+
+.nw-tip {
+    position: absolute;
+    top: 4px;
+    transform: translateX(-50%);
+    max-width: 60%;
+    padding: 2px 6px;
+    background: var(--text);
+    color: var(--surface);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    pointer-events: none;
+    z-index: 3;
+}
+.nw-tip.nw-tip-right { transform: translateX(-100%); }
+
+.nw-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+.nw-legend-item { display: inline-flex; align-items: center; gap: 4px; }
+.nw-legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+.history-trades, .history-findings { display: flex; flex-direction: column; gap: var(--spacing-xs); font-size: 0.85rem; }
+.history-summary { font-size: 0.85rem; font-style: italic; opacity: 0.9; }
+
+/* ==================== Notes ==================== */
+
+.history-note-display {
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+}
+
+.history-note-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.history-note-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.history-note-input {
+    width: 100%;
+    resize: vertical;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    padding: var(--spacing-sm);
+    font: inherit;
+}
+
+.history-finding { display: flex; gap: var(--spacing-sm); align-items: baseline; }
+
+.finding-sev {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    padding: 0 5px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
+.finding-sev.sev-major { border-color: var(--danger); color: var(--danger); }
+.finding-sev.sev-minor { border-color: var(--warning); color: var(--warning); }
+
+.score-chip {
+    font-size: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2px 8px;
+    background: var(--surface-alt);
+}
+.score-chip strong { font-variant-numeric: tabular-nums; }
+
+/* ==================== Recommendations ==================== */
+
+.history-recs { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+
+.rec-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.rec-knob { font-family: monospace; font-size: 0.8rem; }
+.rec-reason { color: var(--text-muted); }
+.rec-line { display: flex; align-items: center; gap: var(--spacing-sm); flex-wrap: wrap; }
+.rec-line .btn:first-of-type { margin-left: auto; } /* push the action group right; later btns follow at gap */
+.rec-support { font-size: 0.75rem; color: var(--text-muted); }
+
+.rec-dismiss { padding-inline: var(--spacing-sm); line-height: 1; }
+.rec-card-dismissed { opacity: 0.55; border-left-color: var(--border); }
+.rec-retired { font-size: 0.75rem; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 0 0.35rem; }
+.rec-dismissed-toggle {
+    align-self: flex-start;
+    background: none; border: none; padding: 0;
+    color: var(--text-muted); font-size: 0.8rem;
+    text-decoration: underline; cursor: pointer;
+}
+
+/* ==================== Tuning panel ==================== */
+
+.tuning-body { max-height: 60vh; overflow-y: auto; }
+
+.tuning-group-title {
+    font-weight: 600;
+    margin: var(--spacing-md) 0 var(--spacing-xs);
+    border-bottom: 1px solid var(--border);
+}
+
+.tuning-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 2px 0;
+    font-size: 0.85rem;
+}
+
+.tuning-row label { flex: 1; }
+
+.tuning-row input[type="number"] {
+    width: 5.5em;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.tuning-row.is-changed input[type="number"] { border-color: var(--accent); font-weight: 600; }
+
+.tuning-default { color: var(--text-muted); font-size: 0.75rem; min-width: 3.5em; text-align: right; }
+
+.tuning-info {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 0.75rem;
+}
+
+.tuning-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0 var(--spacing-sm) var(--spacing-xs);
+    border-left: 2px solid var(--border);
+    margin: 0 0 var(--spacing-xs) 2px;
+}
+
+.tuning-reset {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 2px 4px;
+    visibility: hidden;
+}
+
+.tuning-row.is-changed .tuning-reset { visibility: visible; }

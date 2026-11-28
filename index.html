@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Property Tycoon</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ECE3D0" data-light="#ECE3D0" data-dark="#1f1810">
+    <script src="scripts/ui/theme.js" data-key="monopoly_settings" data-field="theme"></script>
+    <script src="scripts/ui/style.js"></script>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+
+    <!-- ============ SETUP (HOME) SCREEN ============ -->
+    <!-- Always the first screen: a game in progress shows as a Continue card
+         at the top of New Game (setup.js), so every tab stays reachable. -->
+    <section id="screen-setup" class="screen" hidden>
+        <header class="app-header">
+            <div class="app-header-inner">
+                <img src="logo.png" alt="" class="app-logo">
+                <h1 class="app-title">Property Tycoon</h1>
+                <!-- Home sections: shared subtabs (scripts/ui/subtabs.js; icons drawn by setup.js) -->
+                <div class="ui-seg ui-subtabs home-subtabs" role="group" aria-label="Sections">
+                    <button type="button" data-view="setup" data-icon="dice"><span>Play</span></button>
+                    <button type="button" data-view="history" data-icon="history"><span>History</span></button>
+                    <button type="button" data-view="stats" data-icon="stats"><span>Stats</span></button>
+                    <button type="button" data-view="lab" data-icon="flask"><span>Lab</span></button>
+                </div>
+            </div>
+        </header>
+        <div id="tab-setup" class="setup-tab-panel ui-view flat" data-view="setup">
+            <div id="setup-continue"></div>
+            <div id="setup-seats" class="setup-seats"></div>
+            <div class="setup-actions">
+                <button id="btn-setup-settings" class="btn btn-quiet btn-square" aria-label="Settings" title="Settings"></button>
+                <button id="btn-start-game" class="btn btn-primary btn-lg btn-start">Start Game <span class="btn-start-sub"></span></button>
+            </div>
+        </div>
+        <div id="tab-history" class="setup-tab-panel ui-view flat" data-view="history" hidden>
+            <div id="history-root"></div>
+        </div>
+        <div id="tab-stats" class="setup-tab-panel ui-view flat" data-view="stats" hidden>
+            <div id="stats-root"></div>
+        </div>
+        <div id="tab-lab" class="setup-tab-panel ui-view flat" data-view="lab" hidden>
+            <div id="lab-root"></div>
+        </div>
+    </section>
+
+    <!-- ============ GAME SCREEN ============ -->
+    <section id="screen-game" class="screen" hidden>
+        <div class="game-layout">
+
+            <div id="status-bar" class="status-bar"></div>
+
+            <div id="board" class="board board-ring">
+                <div id="board-center" class="board-center">
+                    <div id="dice-area" class="dice-area">
+                        <span class="die" id="die-1">?</span>
+                        <span class="die" id="die-2">?</span>
+                    </div>
+                    <div id="turn-banner" class="turn-banner"></div>
+                    <div id="announce" class="announce" aria-live="polite"></div>
+                    <!-- Internal, Buttons: Bottom: the CPU's thinking pill stays here,
+                         where the centred buttons would be (Controls._thinkingNote) -->
+                    <div id="centre-note" class="centre-note"></div>
+                </div>
+                <!-- tiles injected by board-renderer -->
+            </div>
+
+            <!-- Cover display only: drag to trade board size for player-column width -->
+            <div id="cover-split" class="cover-split" role="separator" aria-orientation="vertical"
+                 aria-label="Resize player column (double-tap to reset)" tabindex="0"></div>
+
+            <div id="player-panels" class="player-panels"></div>
+
+            <div id="controls" class="controls" data-fit-group></div>
+            <!-- Internal layout only: an invisible copy of the tallest button set
+                 (Controls.render fills it), so the board's size never follows
+                 the number of button rows -->
+            <div id="controls-ghost" class="controls controls-ghost" aria-hidden="true" inert></div>
+
+        </div>
+    </section>
+
+    <!-- ============ MODAL ROOT ============ -->
+    <div id="modal-root" class="modal-root" hidden>
+        <div class="modal-backdrop"></div>
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-head">
+                <h2 id="modal-title"></h2>
+                <button id="modal-close" class="modal-close" aria-label="Close" hidden>✕</button>
+            </div>
+            <div id="modal-body"></div>
+            <div id="modal-buttons" class="modal-buttons"></div>
+        </div>
+    </div>
+
+    <!-- Core -->
+    <script src="scripts/core/constants.js"></script>
+    <script src="scripts/core/rng.js"></script>
+    <script src="scripts/core/board-data.js"></script>
+    <script src="scripts/core/storage.js"></script>
+    <script src="scripts/core/game-state.js"></script>
+    <script src="scripts/core/rules-engine.js"></script>
+    <script src="scripts/core/game-history.js"></script>
+    <!-- Features -->
+    <script src="scripts/features/cards.js"></script>
+    <script src="scripts/features/property-actions.js"></script>
+    <script src="scripts/features/auction.js"></script>
+    <script src="scripts/features/bankruptcy.js"></script>
+    <script src="scripts/features/trading.js"></script>
+    <!-- AI -->
+    <script src="scripts/ai/tuning.js"></script>
+    <script src="scripts/ai/evaluator.js"></script>
+    <script src="scripts/ai/lookahead.js"></script>
+    <script src="scripts/ai/personalities.js"></script>
+    <script src="scripts/ai/cpu-player.js"></script>
+    <script src="scripts/ai/cpu-trade.js"></script>
+    <script src="scripts/ai/cpu-trade-generators.js"></script>
+    <script src="scripts/ai/cpu-clone.js"></script>
+    <!-- UI -->
+    <script src="scripts/ui/anim.js"></script>
+    <script src="scripts/ui/icons.js"></script>
+    <script src="scripts/ui/notifications.js"></script>
+    <script src="scripts/ui/sound.js"></script>
+    <script src="scripts/ui/screen-manager.js"></script>
+    <script src="scripts/ui/modals.js"></script>
+    <script src="scripts/ui/toast-offset.js"></script>
+    <script src="scripts/ui/fit-text.js"></script>
+    <script src="scripts/ui/segmented.js"></script>
+    <script src="scripts/ui/subtabs.js" data-prefix="pt"></script>
+    <script src="scripts/ui/board-renderer.js"></script>
+    <script src="scripts/ui/panels.js"></script>
+    <script src="scripts/ui/cover-split.js"></script>
+    <script src="scripts/ui/dice-ui.js"></script>
+    <script src="scripts/ui/motion.js"></script>
+    <script src="scripts/ui/effort-notes.js"></script>
+    <script src="scripts/ui/log.js"></script>
+    <script src="scripts/ui/property-ui.js"></script>
+    <script src="scripts/ui/trade-ui.js"></script>
+    <script src="scripts/ui/auction-ui.js"></script>
+    <script src="scripts/ui/controls.js"></script>
+    <script src="scripts/ui/setup.js"></script>
+    <script src="scripts/ui/settings.js"></script>
+    <script src="scripts/ui/history-ui.js"></script>
+    <script src="scripts/ui/save-states-ui.js"></script>
+    <script src="scripts/ui/stats-ui.js"></script>
+    <script src="scripts/ui/lab-ui.js"></script>
+    <script src="scripts/ui/tuning-ui.js"></script>
+    <!-- Engine + boot -->
+    <script src="scripts/core/turn-engine.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+#screen-game { max-width: 1100px; }
+
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Board / player-column drag handle: cover display only (motorola-external.css) */
+.cover-split { display: none; }
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    padding: var(--spacing-xs) 0;
+}
+
+/* Spacer for the internal layout's bottom buttons (motorola-internal.css,
+   html.ctl-bottom only). Two ids, so no layout's `.controls` rule shows it
+   (the wide cover's grid did, drawn over the real buttons). */
+#screen-game #controls-ghost { display: none; }
+
+.cpu-thinking {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: var(--spacing-sm);
+}
+
+/* A CPU's turn (Controls._thinkingNote): a quiet pill in the main button's
+   slot, edged in the seat's colour, so the buttons don't jump in when the
+   turn comes back. The cover keeps the plain line (motorola-external.css). */
+.cpu-thinking-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 48px;
+    padding: 0 var(--spacing-md);
+    border-radius: var(--radius-pill);
+    background: var(--surface-alt);
+    box-shadow: inset 0 0 0 1.5px var(--seat, var(--border));
+    color: var(--text);
+    font-style: normal;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+.cpu-thinking-token { margin-inline-end: 0.35em; }
+.controls > .cpu-thinking:not(.cpu-thinking-pill) { text-align: center; padding-block: var(--spacing-xs); }
+
+.debt-banner {
+    width: 100%;
+    text-align: center;
+    background: var(--danger);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    font-weight: 600;
+}
+
+/* Opening roll-off modal */
+.rolloff-round {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: var(--spacing-sm) 0 var(--spacing-xs);
+}
+
+.rolloff-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.rolloff-name { font-weight: 600; }
+.rolloff-dice { font-variant-numeric: tabular-nums; }
+
+.rolloff-winner {
+    text-align: center;
+    font-size: 1.1rem;
+    margin: var(--spacing-md) 0 0;
+}
+
+/* Extras only some layouts have room for: status-bar labels (wide cover),
+   set chips on the player cards (internal, wide cover) and the rent in the
+   property list (wide cover). */
+.btn-settings > .status-label,
+.player-panel > .panel-sets,
+.portfolio-row > .portfolio-rent { display: none; }

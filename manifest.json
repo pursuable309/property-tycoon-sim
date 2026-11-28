@@ -1,0 +1,31 @@
+{
+    "name": "Property Tycoon",
+    "short_name": "Property Tycoon",
+    "description": "Offline Monopoly-style board game for 2-8 players (humans and CPU).",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#ECE3D0",
+    "theme_color": "#ECE3D0",
+    "icons": [
+        {
+            "src": "icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

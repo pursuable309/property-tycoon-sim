@@ -1,0 +1,83 @@
+:root {
+    /* Spacing (internal-display scale per MOTOROLA.md; external overrides in responsive) */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-pill: 999px;
+
+    --touch-target: 44px;
+
+    /* Light theme ("Banker": quiet parchment brand bar, deep-green actions,
+       money-green numbers). Dark values: themes/dark.css; the other styles
+       (Felt Table, Newsprint, High Contrast): themes/style-*.css. */
+    --bg: #f6f1e7;
+    --surface: #ffffff;
+    --surface-alt: #f2ebdc;
+    --board-bg: #cfe3cf;
+    /* Text placed directly on the board (turn line); a style with a dark
+       board in light mode overrides it */
+    --board-ink: var(--text);
+    --text: #22201b;
+    --text-muted: #6a5f51;
+    --border: #dccfb5;
+    --card-border: #e6dcc6;
+    --accent: #1e6b45;
+    --accent-contrast: #ffffff;
+    --brand: #ece3d0;
+    --brand-ink: #2b2113;
+    --brand-ink-muted: rgba(43, 33, 19, 0.65);
+    --money: #1e6b45;
+    --pos: #1e6b45;
+    --neg: #b3261e;
+    --badge-warn: #e8590c;
+    --chip-win-bg: #e1f1e6;
+    --chip-win-ink: #165536;
+    --chip-live-bg: #fbecd2;
+    --chip-live-ink: #7a4a07;
+    --chip-fail-bg: #f7dad6;
+    --chip-fail-ink: #8c1d16;
+    /* Toasts keep the pre-Banker colours: info blue, never the green accent */
+    --notify-info: #0072BB;
+    --font-mono: ui-monospace, 'Noto Sans Mono', 'SFMono-Regular', monospace;
+    --danger: #dc3545;
+    --warning: #966d09;
+    --success: #177d4d;
+    /* Auction: the row of whoever's turn it is to bid (yellow tint + edge) */
+    --bid-turn-bg: #fff1bf;
+    --bid-turn-edge: #e0a800;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    --shadow-card: 0 1px 3px rgba(60, 45, 20, 0.08);
+
+    /* Shared token names (projects/.shared/README.md "Design Tokens"). This file and the
+       themes/style-*.css files are this app's brand: most names above already are the shared
+       ones (--bg, --surface, --text, --border, --accent, --danger, --radius-*, --shadow,
+       --font-mono). The rest are given here as aliases of this app's own names, so they follow
+       every style and theme, and shared components (ui.css, dialog.js) can be dropped in. The
+       shared tokens.css is not loaded: its dark defaults would win over these aliases. */
+    --surface-2: var(--surface-alt);
+    --muted: var(--text-muted);
+    --accent-text: var(--accent-contrast);
+    --accent-soft: var(--chip-win-bg);
+    --link: var(--accent);
+    --focus: var(--accent);
+    --danger-text: #ffffff;
+    --danger-soft: var(--chip-fail-bg);
+    --warn: var(--warning);
+    --warn-soft: var(--chip-live-bg);
+    --ok: var(--success);
+    --ok-soft: var(--chip-win-bg);
+    --overlay: rgba(0, 0, 0, 0.45);
+    --radius-xl: 16px;
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --text-xs: 11px; --text-sm: 13px; --text-md: 15px; --text-lg: 17px; --text-xl: 22px;
+    --control-h: var(--touch-target);
+    --shadow-sm: var(--shadow-card);
+    --motion: .15s;
+}

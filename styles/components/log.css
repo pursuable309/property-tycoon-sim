@@ -1,0 +1,228 @@
+.log-entry { padding: 1px 0; border-bottom: 1px dotted var(--border); }
+
+/* ---- Full log modal (live feed) ---- */
+
+.log-modal { display: flex; flex-direction: column; }
+
+.log-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.log-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px var(--spacing-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--surface-alt, rgba(127, 127, 127, 0.12));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+.log-filter-toggle[aria-expanded="true"] {
+    background: var(--accent, #4a86d8);
+    border-color: var(--accent, #4a86d8);
+    color: #fff;
+}
+
+.log-filter-summary {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}
+
+.log-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: var(--spacing-xs);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--border);
+}
+
+.log-chip-quick { display: flex; gap: 4px; margin-right: 4px; }
+.log-chip-all {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px var(--spacing-sm);
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+.log-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 3px var(--spacing-sm);
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-left-width: 3px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.12s ease;
+}
+.log-chip[aria-pressed="true"] { opacity: 1; color: var(--text); }
+.log-chip .log-icon { margin-right: 0; }
+
+.log-full-list {
+    max-height: 60vh;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.log-cap-note {
+    padding: 2px var(--spacing-xs);
+    font-size: 0.72rem;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.log-turn-divider {
+    margin-top: var(--spacing-sm);
+    padding: 1px var(--spacing-xs);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+}
+
+.log-full-entry {
+    padding: 2px var(--spacing-xs);
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    border-radius: var(--radius-sm);
+}
+
+.log-icon { margin-right: 4px; }
+
+/* Supporting lines (e.g. trade offer contents): indented and quieter */
+.log-detail {
+    padding-left: calc(var(--spacing-xs) + 14px);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* Highlighted event types: tinted row + colored left edge */
+.log-hl-rent     { border-left-color: #e05555; background: rgba(224, 85, 85, 0.12); }
+.log-hl-trade    { border-left-color: #9b59d0; background: rgba(155, 89, 208, 0.12); }
+.log-hl-card     { border-left-color: #e8a13c; background: rgba(232, 161, 60, 0.14); }
+.log-hl-buy      { border-left-color: #3d9e50; background: rgba(61, 158, 80, 0.13); }
+.log-hl-mortgage { border-left-color: #4a86d8; background: rgba(74, 134, 216, 0.13); }
+.log-hl-build    { border-left-color: #2fa8a0; background: rgba(47, 168, 160, 0.13); }
+.log-hl-ai       { border-left-color: #7a7fe0; background: rgba(122, 127, 224, 0.12); }
+.log-hl-bankrupt { border-left-color: var(--danger); background: rgba(160, 40, 40, 0.16); font-weight: 600; }
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .log-hl-rent     { background: rgba(224, 85, 85, 0.18); }
+    :root:not([data-theme="light"]) .log-hl-trade    { background: rgba(155, 89, 208, 0.18); }
+    :root:not([data-theme="light"]) .log-hl-card     { background: rgba(232, 161, 60, 0.16); }
+    :root:not([data-theme="light"]) .log-hl-buy      { background: rgba(61, 158, 80, 0.18); }
+    :root:not([data-theme="light"]) .log-hl-mortgage { background: rgba(74, 134, 216, 0.18); }
+    :root:not([data-theme="light"]) .log-hl-build    { background: rgba(47, 168, 160, 0.18); }
+    :root:not([data-theme="light"]) .log-hl-ai       { background: rgba(122, 127, 224, 0.2); }
+    :root:not([data-theme="light"]) .log-hl-bankrupt { background: rgba(224, 85, 85, 0.2); }
+}
+:root[data-theme="dark"] .log-hl-rent     { background: rgba(224, 85, 85, 0.18); }
+:root[data-theme="dark"] .log-hl-trade    { background: rgba(155, 89, 208, 0.18); }
+:root[data-theme="dark"] .log-hl-card     { background: rgba(232, 161, 60, 0.16); }
+:root[data-theme="dark"] .log-hl-buy      { background: rgba(61, 158, 80, 0.18); }
+:root[data-theme="dark"] .log-hl-mortgage { background: rgba(74, 134, 216, 0.18); }
+:root[data-theme="dark"] .log-hl-build    { background: rgba(47, 168, 160, 0.18); }
+:root[data-theme="dark"] .log-hl-ai       { background: rgba(122, 127, 224, 0.2); }
+:root[data-theme="dark"] .log-hl-bankrupt { background: rgba(224, 85, 85, 0.2); }
+
+
+/* A chip must show its category tint even when inactive (opacity handles the
+   pressed state), so keep the highlight background visible on chips. */
+.log-chip.log-hl-ai,
+.log-chip.log-hl-bankrupt { font-weight: 600; }
+
+/* ---- Lever tags on CPU reasoning lines (entry.levers; panel text from EffortNotes) ---- */
+
+.lever-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-left: 5px;
+    vertical-align: baseline;
+}
+.lever-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 5px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-muted);
+    background: var(--surface-alt, rgba(127, 127, 127, 0.12));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+.lever-chip .icon { width: 0.95em; height: 0.95em; }
+.lever-chip[aria-expanded="true"] {
+    color: var(--text);
+    border-color: var(--accent, #4a86d8);
+}
+
+.lever-panel {
+    margin: 2px 0 5px 1.4em;
+    padding: 5px 8px;
+    font-size: 0.78rem;
+    color: var(--text);
+    background: var(--surface-alt, rgba(127, 127, 127, 0.1));
+    border-left: 3px solid var(--accent, #4a86d8);
+    border-radius: var(--radius-md);
+}
+.lever-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    font-weight: 600;
+}
+.lever-id { font-weight: 800; }
+.lever-status {
+    padding: 0 5px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+.lever-note { margin-top: 3px; color: var(--text-muted); font-style: italic; }
+.lever-headline { margin-top: 3px; }
+.lever-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.lever-detail { margin-top: 5px; white-space: pre-line; }
+.lever-facts { margin-top: 5px; font-size: 0.72rem; color: var(--text-muted); }
+.lever-more {
+    margin-top: 4px;
+    padding: 1px 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent, #4a86d8);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}

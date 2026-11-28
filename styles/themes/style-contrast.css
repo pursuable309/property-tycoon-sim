@@ -1,0 +1,89 @@
+/* Style "High Contrast" (html[data-style="contrast"]): pure black and white,
+   thick outlines, heavier type; for sunlight and the small cover display. */
+:root[data-style="contrast"] {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #ffffff;
+    --board-bg: #000000;
+    --text: #000000;
+    --text-muted: #2b2b2b;
+    --border: #000000;
+    --card-border: #000000;
+    --accent: #000000;
+    --accent-contrast: #ffffff;
+    --brand: #ffffff;
+    --brand-ink: #000000;
+    --brand-ink-muted: rgba(0, 0, 0, 0.75);
+    --money: #000000;
+    --pos: #0b5a2a;
+    --neg: #a00000;
+    --shadow: none;
+    --shadow-card: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[data-style="contrast"]:not([data-theme="light"]) {
+        --bg: #000000;
+        --surface: #000000;
+        --surface-alt: #000000;
+        --board-bg: #ffffff;
+        --text: #ffffff;
+        --text-muted: #d8d8d8;
+        --border: #ffffff;
+        --card-border: #ffffff;
+        --accent: #ffd400;
+        --accent-contrast: #000000;
+        --brand: #000000;
+        --brand-ink: #ffffff;
+        --brand-ink-muted: rgba(255, 255, 255, 0.8);
+        --money: #ffd400;
+        --pos: #7dff9e;
+        --neg: #ff8d80;
+        --shadow: none;
+        --shadow-card: none;
+    }
+}
+
+:root[data-style="contrast"][data-theme="dark"] {
+    --bg: #000000;
+    --surface: #000000;
+    --surface-alt: #000000;
+    --board-bg: #ffffff;
+    --text: #ffffff;
+    --text-muted: #d8d8d8;
+    --border: #ffffff;
+    --card-border: #ffffff;
+    --accent: #ffd400;
+    --accent-contrast: #000000;
+    --brand: #000000;
+    --brand-ink: #ffffff;
+    --brand-ink-muted: rgba(255, 255, 255, 0.8);
+    --money: #ffd400;
+    --pos: #7dff9e;
+    --neg: #ff8d80;
+    --shadow: none;
+    --shadow-card: none;
+}
+
+:root[data-style="contrast"] body { font-weight: 600; }
+:root[data-style="contrast"] .app-header,
+:root[data-style="contrast"] #screen-game .status-bar { border-bottom: 2px solid var(--border); box-shadow: none; }
+:root[data-style="contrast"] #screen-game .status-bar { border-radius: 0; }
+:root[data-style="contrast"] .board-ring { border: 3px solid var(--border); gap: 2px; }
+:root[data-style="contrast"] .board-center { background: var(--surface); }
+:root[data-style="contrast"] .tile-band { height: 34%; }
+:root[data-style="contrast"] .tile-glyph { color: var(--text); }
+:root[data-style="contrast"] .owner-dot { width: 8px; height: 8px; outline: 1px solid var(--text); }
+:root[data-style="contrast"] .die,
+:root[data-style="contrast"] .announce { border: 2px solid var(--border); }
+:root[data-style="contrast"] .player-panel {
+    border-top: 2px solid var(--border);
+    border-right: 2px solid var(--border);
+    border-bottom: 2px solid var(--border);
+}
+:root[data-style="contrast"] .btn { border: 2px solid var(--border); }
+
+/* Cover display: tiles are too small for the larger dots */
+@media (max-height: 499px) {
+    :root[data-style="contrast"] .owner-dot { width: 6px; height: 6px; outline: none; }
+}

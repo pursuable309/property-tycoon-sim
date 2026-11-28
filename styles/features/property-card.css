@@ -1,0 +1,428 @@
+.deed-band {
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    margin-bottom: var(--spacing-sm);
+}
+
+.deed-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.deed-table td {
+    padding: 3px 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.deed-table td:last-child { text-align: right; font-weight: 600; }
+.deed-table tr.deed-status td:last-child { color: var(--danger); }
+
+/* Rent row currently in force for an owned property. Tinted from --success so
+ * it reads on both light and dark surfaces without a per-theme override. */
+.deed-table tr.deed-rent-active td {
+    background: color-mix(in srgb, var(--success) 16%, transparent);
+    font-weight: 700;
+}
+
+.deed-table tr.deed-rent-active td:first-child {
+    box-shadow: inset 3px 0 0 0 var(--success);
+}
+
+.deed-rent-note {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--pos);   /* text green, set per style and mode (--success is a fill) */
+}
+
+/* The open deed hangs from the colour band as one card (the band is its
+   header, so the deed's own band is dropped), above the bidders */
+.auction-deed {
+    margin: calc(-1 * var(--spacing-xs)) 0 var(--spacing-sm);
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    padding: 2px 0;
+}
+.auction-deed .deed-band,
+.auction-deed .deed-price { display: none; }   /* the band shows group + list price */
+.auction-deed .deed-table tr:last-child td { border-bottom: 0; }
+.auction-band:has(+ .auction-deed:not([hidden])) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* The ⓘ after the auctioned property's name: toggles its deed */
+.auction-deed-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 0.85em;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.auction-deed-btn[aria-expanded="true"] { color: var(--text); }
+
+.portfolio { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+
+.portfolio-row > .portfolio-name { min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap; }
+.portfolio-row > .portfolio-rent { flex: none; }
+.portfolio-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-height: var(--touch-target);
+    text-align: left;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+/* Mortgaged: greyed out (muted text, colourless swatch) under the same
+   diagonal hatching as mortgaged tiles on the board */
+.portfolio-row.mortgaged, .ownership-row.mortgaged { color: var(--text-muted); }
+.portfolio-row.mortgaged .swatch, .ownership-row.mortgaged .swatch { filter: grayscale(1); opacity: 0.6; }
+.portfolio-row.mortgaged::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(128, 128, 128, 0.45) 4px, rgba(128, 128, 128, 0.45) 7px);
+    pointer-events: none;
+}
+
+.swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+/* Auction colour band: same look as the deed band, group left, list price right */
+.auction-band {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    color: #fff;
+    font-weight: 700;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Modal title with a small kicker line above the main title */
+.modal-kicker {
+    display: block;
+    font-size: 0.6em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.modal-title-main { display: block; }
+/* List price in the title row: cover only (elsewhere the colour band shows it) */
+.modal-title-price { display: none; }
+
+.auction-trade-note {
+    border-left: 3px solid var(--danger);
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    margin: 0 0 var(--spacing-xs);
+    font-size: 0.85rem;
+}
+.auction-trade-note.accepted {
+    border-left-color: var(--success);
+    background: rgba(25, 135, 84, 0.12);
+}
+
+/* Auction bidder table */
+.bidder-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: var(--spacing-xs) 0;
+}
+
+.bidder-table th {
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 2px var(--spacing-xs);
+}
+/* Cash and Bid headers sit over their right-aligned numbers */
+.bidder-table th:nth-child(n+2) { text-align: right; }
+
+.bidder-table td {
+    padding: 4px var(--spacing-xs);
+    border-top: 1px solid var(--border);
+}
+
+.bidder-name { font-weight: 600; color: var(--token, inherit); }
+/* Money figures in the cash panel's mono face */
+.bidder-cash, .bidder-bid { font-family: var(--font-mono); }
+/* The leader's trophy, kept small so the bid figure keeps the room */
+.bidder-trophy { font-size: 0.75em; margin-right: 0.2em; }
+/* Cash: informational only — kept tiny + muted so it never competes with the bid. */
+.bidder-cash {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+/* Bid is the primary number in the row — larger + bolder than the rest. */
+.bidder-bid {
+    text-align: right;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.bidder-leading {
+    background: rgba(25, 135, 84, 0.1);
+    border-left: 3px solid var(--success);
+}
+.bidder-leading .bidder-bid { font-weight: 700; color: var(--success); }
+
+/* The deciding CPU's spinner by its bid: only where the "is deciding…"
+   line is hidden (the cover) */
+.bidder-spinner { display: none; }
+
+/* Whose turn it is: a yellow-tinted row with a yellow edge (the leader's is
+   green). Name and cash in the plain text colour, since a yellow token's
+   colour would vanish on the tint. */
+.bidder-current td { background: var(--bid-turn-bg); color: var(--text); }
+.bidder-current td:first-child { box-shadow: inset 4px 0 0 var(--bid-turn-edge); }
+.bidder-current .bidder-name, .bidder-current .bidder-cash { color: var(--text); }
+/* Your own cash while it's your bid: full size and bold, not the muted
+   footnote the other rows' cash is (the row's font, so every layout scales it) */
+.bidder-current .bidder-cash { font-size: 1em; font-weight: 700; }
+.bidder-you {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--bid-turn-edge);
+    color: #1d1d1f;   /* dark on yellow in both themes */
+    font-size: 0.7em;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    vertical-align: 1px;
+}
+
+.bidder-passed { opacity: 0.45; }
+/* Struck through across the whole row (name, cash, bid, status) once out of the auction. */
+.bidder-passed td { text-decoration: line-through; }
+
+/* Group house manager */
+.group-cash {
+    margin: 0 0 var(--spacing-xs);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.group-stock-warning {
+    margin: 0 0 var(--spacing-xs);
+    padding: var(--spacing-xs);
+    border: 1px solid var(--warning);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--warning) 12%, transparent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--warning);
+}
+
+.group-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    align-items: center;
+    gap: var(--spacing-xs);
+    min-height: var(--touch-target);
+    border-bottom: 1px solid var(--border);
+    padding: var(--spacing-xs) 0;
+}
+
+.group-row-name { font-size: 0.9rem; }
+
+.group-row-houses {
+    font-size: 0.85rem;
+    letter-spacing: -2px;
+    min-width: 4.5em;
+    text-align: right;
+}
+
+.group-row-pending .group-row-name { font-weight: 700; }
+
+.group-delta {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-left: 2px;
+}
+
+.group-delta-plus { color: var(--success); }
+.group-delta-minus { color: var(--danger); }
+
+.group-plan-summary {
+    margin: var(--spacing-sm) 0 0;
+    padding: var(--spacing-xs);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--text-muted);
+    /* Always rendered (see property-ui.js); reserve two lines so the box height
+       never changes as the plan text lengthens or the state goes idle. */
+    min-height: 2.9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.group-plan-summary-idle { opacity: 0.55; }
+
+/* Fixed width so the Confirm button occupies the same footprint whether it
+   reads "Confirm" (idle) or "Confirm (−$1200)" (pending) — keeps the footer
+   from re-wrapping and changing height between taps. */
+.group-confirm-btn {
+    min-width: 9.5em;
+    white-space: nowrap;
+}
+
+.group-btn {
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    padding: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.group-btn:disabled { opacity: 0.35; }
+
+.group-bulk {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+/* Share the row equally and never wrap — same technique as the auction bid
+   buttons (.modal-buttons .btn-grow): flex:1 with min-width:0 lets each shrink
+   below its label so both stay on one line as the amounts widen. */
+.group-bulk .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.group-bulk .btn:disabled { opacity: 0.35; }
+
+.group-manage-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    min-height: 28px;
+    padding: 0 var(--spacing-xs);
+}
+
+/* "Who owns what" ownership overview */
+.ownership { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+
+.ownership-chips {
+    margin-left: auto;
+    display: flex;
+    gap: var(--spacing-sm);
+    text-transform: none;
+}
+
+.ownership-chip { font-weight: 700; white-space: nowrap; }
+
+.ownership-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-height: var(--touch-target);
+    text-align: left;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.ownership-row.mortgaged::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(128, 128, 128, 0.45) 4px, rgba(128, 128, 128, 0.45) 7px);
+    pointer-events: none;
+}
+
+/* Group currently under auction (Owners opened mid-auction) */
+.trade-group-label.ownership-auction { scroll-margin-top: var(--spacing-sm); }
+
+.ownership-auction-badge {
+    margin-left: var(--spacing-sm);
+    color: var(--warning);
+    white-space: nowrap;
+}
+
+.ownership-row.ownership-auction { border-color: var(--warning); }
+
+.ownership-row.ownership-auction-tile { box-shadow: inset 0 0 0 1px var(--warning); }
+
+/* Properties on the table (Owners opened from the trade builder/offer) */
+.trade-group-label.ownership-trade { scroll-margin-top: var(--spacing-sm); }
+
+.ownership-trade-badge {
+    margin-left: var(--spacing-sm);
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.ownership-row.ownership-trade { border-color: var(--accent); }
+
+.ownership-row.ownership-trade-tile { box-shadow: inset 0 0 0 1px var(--accent); }
+
+.ownership-houses { letter-spacing: -2px; white-space: nowrap; }
+
+.ownership-owner {
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.ownership-owner em { color: var(--text-muted); font-weight: 400; }
+
+/* Spectator view after you've bid in this auction: the table keeps the bid
+   sheet's font and row height (auction-ui.js sets --held-font/--held-row),
+   so rows don't resize as the turn passes between you and the CPUs. The
+   spare room goes around the "is deciding" line instead. */
+.auction-rows-held .bidder-table { font-size: var(--held-font) !important; flex: none !important; }
+.auction-rows-held .bidder-table tbody tr { height: var(--held-row); }
+.auction-rows-held .cpu-thinking { margin-block: auto; }

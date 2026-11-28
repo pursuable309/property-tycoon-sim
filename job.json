@@ -1,0 +1,60 @@
+{
+  "id": "20261128-030014-ui-72c",
+  "kind": "ui-check",
+  "submitted": 1795852815,
+  "head": "d1c60c1",
+  "dirty": false,
+  "args": [
+    "--theme",
+    "light,dark",
+    "--ownership",
+    "tint",
+    "--groups",
+    "game",
+    "--sizes",
+    "internal,cover-cams"
+  ],
+  "flags": [
+    "--states",
+    "--groups",
+    "--skip",
+    "--sizes",
+    "--content",
+    "--seats",
+    "--theme",
+    "--style",
+    "--buttons",
+    "--cams",
+    "--anim",
+    "--ownership",
+    "--show-cams"
+  ],
+  "shards": 4,
+  "cases": 72,
+  "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+  "node": "v25.8.2",
+  "app": ".claude/skills/ui-check",
+  "core": ".claude/skills/ui-check/core",
+  "url": "http://localhost:8005/",
+  "start": {
+    "static": {
+      "port": 8005,
+      "dirs": [
+        "/scripts/",
+        "/styles/",
+        "/assets/"
+      ],
+      "fileRe": "^/(index\\.html|manifest\\.json|[\\w-]+\\.(png|ico))?$",
+      "api": {
+        "/api/history": [],
+        "/api/lab/jobs": [],
+        "/api/lab/proposals": {
+          "waiting": [],
+          "running": [],
+          "declined": []
+        }
+      }
+    }
+  },
+  "install": null
+}

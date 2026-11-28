@@ -1,0 +1,67 @@
+/* Sheet anatomy, the same on every display (cover full-screen sheet,
+   internal bottom sheet, full-size dialog): the title row names the thing
+   (with its ⓘ and, for a property, the list price at the right), the
+   group's colour is a thin strip under it, then the body, then the footer
+   (dismiss first, the decisive action last). Loaded after the feature
+   files; #modal-root raises these over their older per-display looks. */
+
+/* The name takes the room and ellipsizes; the ⓘ and the price are locked
+   to the top right, centred on the name's line */
+#modal-root #modal-title:has(.modal-title-price) { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; }
+#modal-root #modal-title .modal-title-main { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: clip; }
+/* With the deed ⓘ: the name ellipsizes, the ⓘ stays visible */
+#modal-root #modal-title .modal-title-main:has(.auction-deed-btn) { display: flex; align-items: center; gap: 6px; }
+#modal-root #modal-title .modal-title-main:has(.auction-deed-btn) .modal-title-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+#modal-root .auction-deed-btn { min-width: 26px; min-height: 26px; flex: none; }
+#modal-root .modal-title-price {
+    display: inline;
+    flex: none;
+    font-size: 0.6em;
+    font-weight: 700;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+/* Auction: the list price is what the bids are measured against, so it
+   reads nearly as large as the name, in body ink */
+#modal-root .modal:has(.auction-body) .modal-title-price { font-size: 0.8em; color: var(--text); }
+/* The title row already says what the sheet is */
+#modal-root .modal-kicker { display: none; }
+
+/* Auction: the property's name reads large (it is what's being bid on) */
+/* (the height term keeps the short cover's rows: 270x195 stays at the minimum) */
+#modal-root .modal:has(.auction-body) #modal-title { font-size: clamp(1.15rem, min(7.5vw, 9dvh), 2.25rem); line-height: 1.15; }
+#modal-root .modal:has(.auction-body) #modal-title .auction-deed-btn { font-size: 0.8em; }
+
+/* Group colour: a strip, not a labelled band (the title names the
+   property and shows its price); the auction's is thicker, the colour is
+   what the table is bidding on */
+#modal-root .auction-band,
+#modal-root #modal-body > .deed-band {
+    font-size: 0;
+    height: 9px;
+    padding: 0;
+    margin: 0 0 4px;
+    border-radius: 3px;
+}
+#modal-root .auction-band { height: clamp(9px, 5.2dvh, 16px); border-radius: 4px; }
+/* Auction footer: close under the table (the cover's own 4px stays) */
+@media (min-height: 500px) {
+    #modal-root .modal:has(.auction-body) .modal-buttons { margin-top: var(--spacing-sm); }
+}
+/* The auction's deed drops its price row: the title shows the list price */
+#modal-root .auction-deed .deed-table tr.deed-price { display: none; }
+
+/* Footer order on every display: Close / Cancel first, then look-only
+   buttons (Owners, Game stats), then actions, the decisive action last.
+   Footers split into rows by a break (auction) keep their own order. The
+   responsive files then decide the rows and widths. */
+.modal-buttons > .btn-top { order: -3; }
+.modal-buttons > .btn-dismiss { order: -2; }
+.modal-buttons:not(:has(.modal-btn-break)) > .btn-info:not(.btn-dismiss) { order: -1; }
+.modal-buttons:not(:has(.modal-btn-break)) > .btn-main { order: 99; }

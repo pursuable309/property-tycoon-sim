@@ -1,0 +1,245 @@
+.screen {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.status-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+    font-weight: 600;
+}
+
+.status-logo {
+    height: 34px;
+    width: 34px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    flex: 0 0 auto;
+}
+
+.status-turn { color: var(--text-muted); font-weight: 400; }
+
+/* In a game the bar is the home screen's brand bar */
+#screen-game .status-bar { background: var(--brand); color: var(--brand-ink); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12); }
+#screen-game .status-turn { color: var(--brand-ink-muted); }
+#screen-game .status-bar .btn-settings { color: var(--brand-ink); }
+
+/* Icon buttons form a right-aligned group; info stays left */
+.status-bar .btn-settings:first-of-type { margin-left: auto; }
+
+.btn-settings {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    padding: 0;
+    min-width: var(--touch-target);
+    min-height: 28px;
+}
+
+.settings-group + .settings-group {
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border);
+}
+
+.settings-group-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 var(--spacing-xs);
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    min-height: var(--touch-target);
+}
+
+/* Diagnostics line at the foot of Settings → Display (screen type · size) */
+.settings-diag {
+    padding-top: var(--spacing-sm);
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Read-only value on the right of a row */
+.settings-value {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.settings-row select {
+    min-height: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    padding: 0 var(--spacing-sm);
+}
+
+/* Segmented rows stack: label on its own line, pills full-width beneath it */
+.settings-row.stacked {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xs);
+    min-height: 0;
+}
+
+.settings-row.stacked .settings-label { font-weight: 500; }
+
+.settings-row.stacked .segmented { display: flex; width: 100%; }
+
+/* Settings sections: the shared subtab bar (components/subtabs.css) */
+.settings-tabs { margin-bottom: var(--spacing-md); }
+
+.settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Toggle rows: an off switch dims its label, a disabled one dims the row */
+.settings-row:has(> .toggle:not(:checked)) { color: var(--text-muted); }
+.settings-row:has(> .toggle:disabled) { opacity: 0.45; cursor: not-allowed; }
+.toggle:disabled { cursor: not-allowed; }
+
+/* ? beside a label: opens the option's explanation (.settings-help) */
+.settings-help-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;    /* WCAG 2.5.8 target size */
+    height: 24px;
+    margin-left: 2px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: none;
+    color: var(--text-muted);
+    vertical-align: middle;
+    cursor: pointer;
+}
+.settings-help-btn svg { width: 15px; height: 15px; }
+.settings-help-btn[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.settings-help {
+    margin: calc(-1 * var(--spacing-xs)) 0 0;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+    color: var(--text);
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+/* Custom values under a preset row (Animations / CPU speed = Custom) */
+.settings-sub {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding-left: var(--spacing-sm);
+    border-left: 2px dashed var(--border);
+}
+.settings-sub[hidden] { display: none; }
+
+/* Timing fields: number in seconds, unit after it */
+.settings-num { display: inline-flex; align-items: center; gap: 4px; flex: none; }
+.settings-num-input {
+    width: 4.6em;
+    min-height: 34px;
+    padding: 0 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+.settings-num-unit { color: var(--text-muted); }
+
+/* Settings → Style: each option is a swatch drawn in that style's own look
+   (fixed colours, so every swatch reads the same whatever style is on).
+   Six-column grid: three swatches on the first row, two wider ones below. */
+.settings-row.stacked .segmented.is-styles {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    padding: 3px; /* room for the selected ring */
+    background: none;
+    border-radius: 0;
+}
+.segmented.is-styles .segmented-opt { grid-column: span 2; }
+.segmented.is-styles .segmented-opt:nth-child(n+4) { grid-column: span 3; }
+.segmented.is-styles .segmented-opt > span {
+    min-height: 40px;
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    font-size: 0.9rem;
+}
+.segmented.is-styles .segmented-opt > span:active { filter: brightness(0.92); }
+/* Selected: a ring in the current accent plus a check, never a fill (the fill is the preview) */
+.segmented.is-styles .segmented-opt input:checked + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.segmented.is-styles .segmented-opt input:checked + span::before { content: '\2713\00a0'; }
+
+.segmented.is-styles input[value="banker"] + span,
+.segmented.is-styles input[value="banker"]:checked + span {
+    background: #ece3d0;
+    color: #1e6b45;
+    font-family: var(--font-display);
+    border-color: #dccfb5;
+}
+.segmented.is-styles input[value="classic"] + span,
+.segmented.is-styles input[value="classic"]:checked + span {
+    background: #ffffff;
+    color: #0072bb;
+    font-family: system-ui, 'Roboto', sans-serif;
+    border-color: #c8d0da;
+    box-shadow: inset 0 -3px 0 #0072bb;
+}
+.segmented.is-styles input[value="felt"] + span,
+.segmented.is-styles input[value="felt"]:checked + span {
+    background: #2f6b4a;
+    color: #f3e6c4;
+    font-family: var(--font-display);
+    border: 2px solid #b8914a;
+}
+.segmented.is-styles input[value="newsprint"] + span,
+.segmented.is-styles input[value="newsprint"]:checked + span {
+    background: #faf8f1;
+    color: #141414;
+    font-family: Georgia, 'Noto Serif', 'DejaVu Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    border-color: #8d897c;
+    border-radius: 2px;
+    box-shadow: inset 0 -4px 0 -1px #faf8f1, inset 0 -5px 0 #141414;
+}
+.segmented.is-styles input[value="contrast"] + span,
+.segmented.is-styles input[value="contrast"]:checked + span {
+    background: #000000;
+    color: #ffffff;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    border: 2px solid #ffffff;
+}

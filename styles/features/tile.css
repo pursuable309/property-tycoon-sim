@@ -1,0 +1,258 @@
+.tile {
+    position: relative;
+    background: var(--surface);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-size: 7px;
+    line-height: 1.05;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.tile-band { height: 22%; flex-shrink: 0; }
+
+/* Property & tax names are omitted from the board at every width/height — the
+   color band, owner dots and building pips carry the information, and the
+   verbose names cramped the small foldable displays. Only corner/action tiles
+   keep a short functional label (GO, JAIL, FREE, GO TO JAIL, ?, CC). */
+.tile-name {
+    padding: 1px;
+    overflow: hidden;
+    text-align: center;
+    word-break: break-word;
+    flex: 1;
+    color: var(--text);
+    display: none;
+}
+
+.tile-go .tile-name, .tile-jail .tile-name,
+.tile-parking .tile-name, .tile-gotojail .tile-name,
+.tile-chance .tile-name, .tile-chest .tile-name {
+    display: block;
+    font-size: 6px;
+    font-weight: 700;
+}
+
+.tile-go, .tile-jail, .tile-parking, .tile-gotojail { background: var(--surface-alt); font-weight: 700; }
+
+/* Tiles with no colour band (railroads, utilities, taxes, Chance, Community
+   Chest) show a line glyph (board-renderer.js _glyph) in place of a band or
+   an abbreviation. Ownable ones keep the plain tile surface; the ones nobody
+   can own share the corners' quieter surface. */
+.tile-has-glyph .tile-name { display: none; }
+.tile-tax, .tile-chance, .tile-chest { background: var(--surface-alt); }
+
+.tile-glyph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    pointer-events: none;
+    container-type: size;
+}
+
+.tile-glyph .icon {
+    width: 62cqmin;
+    height: 62cqmin;
+    stroke-width: 1.8;
+}
+
+.tile-chance .tile-glyph { color: var(--badge-warn); }
+.tile-chest .tile-glyph { color: var(--notify-info); }
+
+/* Owner dot and building pips sit above the glyph */
+.tile-has-glyph .tile-marks { position: relative; z-index: 1; }
+
+.tile.mortgaged::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(128, 128, 128, 0.45) 4px, rgba(128, 128, 128, 0.45) 7px);
+    pointer-events: none;
+}
+
+.tile-marks {
+    position: relative; /* motion.js lays the old owner's emoji over the new one */
+    display: flex;
+    gap: 1px;
+    padding: 1px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.owner-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.house-pip {
+    width: 5px;
+    height: 5px;
+    background: var(--success);
+    display: inline-block;
+    border-radius: 1px;
+}
+
+.hotel-pip {
+    width: 8px;
+    height: 6px;
+    background: var(--danger);
+    display: inline-block;
+    border-radius: 1px;
+}
+
+/* The tile's inner box, a size container so the discs follow the tile on
+   every board size (no breakpoints): a small cover tile shrinks them. */
+.tile-tokens {
+    position: absolute;
+    inset: 1px;
+    container-type: size;
+}
+
+/* A token: the emoji on a white disc ringed in the seat colour (--seat from
+   board-renderer.js). board-renderer.js sets the grid (--tok-cols on the box:
+   1 token / up to 4 in 2x2 / up to 9 in 3x3) and each disc's --col / --row,
+   counted from the bottom-right corner. Discs are at most 13px; on a tile too
+   small for that they shrink and overlap, the step between them down to the
+   disc / 1.35, so cols discs span exactly the tile's shorter side. */
+.token {
+    --tok-s: min(13px, calc(100cqmin * 1.35 / (var(--tok-cols, 1) - 1 + 1.35)));
+    --tok-p: min(var(--tok-s), calc((100cqmin - var(--tok-s)) / max(1, var(--tok-cols, 1) - 1)));
+    position: absolute;
+    right: calc(var(--col, 0) * var(--tok-p));
+    bottom: calc(var(--row, 0) * var(--tok-p));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--tok-s);
+    height: var(--tok-s);
+    border-radius: 50%;
+    background: #fff;
+    border: clamp(1px, calc(var(--tok-s) * 0.115), 1.5px) solid var(--seat, var(--border));
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+    font-size: calc(var(--tok-s) * 0.62);
+    line-height: 1;
+    transition: width 0.3s, height 0.3s, font-size 0.3s;
+}
+
+/* The current player's disc sits in the corner slot (board-renderer.js puts
+   it first) and is 1.3x larger, growing up and left over its neighbours, so
+   it stays inside the tile. */
+.token-current {
+    --tok-s: min(calc(13px * 1.3), calc(100cqmin * 1.35 * 1.3 / (var(--tok-cols, 1) - 1 + 1.35)), 100cqmin);
+    z-index: 1;
+}
+
+/* The hop's stand-in token draws over the discs already on a tile */
+.token-temp { z-index: 2; }
+
+/* Ownership display "Tint" (Settings -> Display; html[data-ownership="tint"]):
+   an owned tile's body takes a wash of the owner's colour (--owner from
+   board-renderer.js) and the dot goes. The band, pips and glyph stay. */
+[data-ownership="tint"] .tile-owned { background: color-mix(in srgb, var(--owner) 45%, var(--surface)); }
+[data-ownership="tint"] .tile-owned .tile-glyph { color: var(--text); }
+/* A wash is far less distinct than the full-strength dot (two seats' tints
+   can sit within a few dE under red-green colour blindness), so the
+   colourblind-friendly setting keeps the dot on top of the tint */
+[data-ownership="tint"]:not([data-colorblind]) .owner-dot { display: none; }
+
+/* Ownership display "Tokens" (html[data-ownership="tokens"]): the owner's
+   token emoji (board-renderer.js ownerEmoji) in a thin ring of the seat colour
+   (--seat) stands in for the dot. It has no white disc, so it doesn't read as
+   a token standing on the tile. The other displays never show it. */
+.owner-emoji { display: none; }
+
+[data-ownership="tokens"] .owner-dot { display: none; }
+
+[data-ownership="tokens"] .owner-emoji {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid var(--seat, var(--border));
+    font-size: 7.5px;
+    line-height: 1;
+}
+
+/* The cover screen's tiles are too small to tell the emoji apart: dots there */
+@media (max-height: 499px) {
+    [data-ownership="tokens"] .owner-dot { display: inline-block; }
+    [data-ownership="tokens"] .owner-emoji { display: none; }
+}
+
+/* Current player's tile highlight */
+.tile-active {
+    outline: 2px solid var(--active-color, var(--accent));
+    outline-offset: -2px;
+    z-index: 1;
+}
+
+/* Token movement animation */
+.token-hidden { visibility: hidden; }
+
+.token-temp { animation: token-hop 0.13s ease-out; }
+
+@keyframes token-hop {
+    0% { transform: translateY(-7px) scale(1.3); opacity: 0.7; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.token-land { animation: token-land 0.3s ease-out; }
+
+@keyframes token-land {
+    0% { transform: scale(1.9); }
+    100% { transform: scale(1); }
+}
+
+/* Board cues: GO pulses gold when salary is paid, Jail pulses red on arrest */
+.tile-flash-go,
+.tile-flash-jail,
+.tile-flash-parking { z-index: 2; }
+
+.tile-flash-go { animation: tile-flash-go 0.6s ease-in-out 2; }
+.tile-flash-jail { animation: tile-flash-jail 0.6s ease-in-out 2; }
+.tile-flash-parking { animation: tile-flash-parking 0.6s ease-in-out 2; }
+
+@keyframes tile-flash-go {
+    50% { box-shadow: inset 0 0 0 3px var(--warning), 0 0 10px 3px rgba(184, 134, 11, 0.7); }
+}
+
+@keyframes tile-flash-jail {
+    50% { box-shadow: inset 0 0 0 3px var(--danger), 0 0 10px 3px rgba(220, 53, 69, 0.7); }
+}
+
+@keyframes tile-flash-parking {
+    50% { box-shadow: inset 0 0 0 3px var(--success), 0 0 10px 3px rgba(31, 178, 90, 0.7); }
+}
+
+/* Free Parking jackpot: the running pot total */
+.parking-pot {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.parking-amount {
+    font-weight: 800;
+    font-size: 8px;
+    line-height: 1;
+    color: #fff;
+    background: var(--success);
+    padding: 1px 2px;
+    border-radius: 3px;
+}
+
